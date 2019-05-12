@@ -2,6 +2,8 @@ package com.csg.mytodolist;
 
 import android.os.Bundle;
 
+import com.csg.mytodolist.model.Todo;
+import com.csg.mytodolist.repository.AppDatabase;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -32,6 +34,14 @@ public class MainActivity extends AppCompatActivity {
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(toolbar, navController);
+
+        AppDatabase.getInstance(this).todoDao().insertAll(
+                new Todo("제목1","내용"),
+                new Todo("제목2","내용"),
+                new Todo("제목3","내용"),
+                new Todo("제목4","내용")
+
+        );
 
 
 

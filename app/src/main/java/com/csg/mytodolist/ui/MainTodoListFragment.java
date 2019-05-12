@@ -6,7 +6,10 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -15,7 +18,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.csg.mytodolist.MainTodoViewModel;
 import com.csg.mytodolist.R;
+import com.csg.mytodolist.databinding.ItemTodoListBinding;
 import com.csg.mytodolist.model.Todo;
 
 import java.util.ArrayList;
@@ -47,6 +52,7 @@ public class MainTodoListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main_todo_list, container, false);
+
         view.findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,12 +67,22 @@ public class MainTodoListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        //ViewModel-----------
+        MainTodoViewModel mainTodoViewModel = ViewModelProviders.of(requireActivity()).get(MainTodoViewModel.class);
+
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        MainTodoListAdapter adapter = new MainTodoListAdapter();
+        final MainTodoListAdapter adapter = new MainTodoListAdapter();
 
-        adapter.setItems(itemList);
         recyclerView.setAdapter(adapter);
+
+        mainTodoViewModel.getItems().observe(this, new Observer<List<Todo>>() {
+            @Override
+            public void onChanged(List<Todo> todos) {
+                adapter.setItems(itemList);
+
+            }
+        });
     }
 
     private static class MainTodoListAdapter extends RecyclerView.Adapter<MainTodoListAdapter.MainViewHolder> {
@@ -115,8 +131,9 @@ public class MainTodoListFragment extends Fragment {
             Todo item = mItems.get(position);
             // TODO : 데이터를 뷰홀더에 표시하시오
             //holder.binding.setItemPhoto(item)
-            holder.titleTextView.setText(item.getTitle());
-            holder.timeTextView.setText(item.getTime());
+//            holder.titleTextView.setText(item.getTitle());
+//            holder.timeTextView.setText(item.getContent());
+            holder.binding.setTodo(item);
         }
 
         @Override
@@ -126,16 +143,16 @@ public class MainTodoListFragment extends Fragment {
 
         public static class MainViewHolder extends RecyclerView.ViewHolder {
             // TODO : 뷰홀더 완성하시오
-            //ItemPhotoBinding binding;
-            private TextView titleTextView;
-            private TextView timeTextView;
+            ItemTodoListBinding binding;
+//            private TextView titleTextView;
+//            private TextView timeTextView;
 
             public MainViewHolder(@NonNull View itemView) {
                 super(itemView);
                 // TODO : 뷰홀더 완성하시오
-                //binding = DataBindingUtil.bind(itemView);
-                titleTextView = itemView.findViewById(R.id.text_view_title);
-                timeTextView = itemView.findViewById(R.id.text_view_time);
+                binding = DataBindingUtil.bind(itemView);
+//                titleTextView = itemView.findViewById(R.id.text_view_title);
+//                timeTextView = itemView.findViewById(R.id.text_view_time);
             }
         }
     }
