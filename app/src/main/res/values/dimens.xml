@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="marginBottom">60dp</dimen>
+    <dimen name="marginRight">16dp</dimen>
+</resources>
