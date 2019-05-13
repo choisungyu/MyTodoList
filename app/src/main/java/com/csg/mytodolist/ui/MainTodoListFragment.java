@@ -12,9 +12,12 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +37,7 @@ public class MainTodoListFragment extends Fragment {
 
     private static final String TAG = NewTaskFragment.class.getSimpleName();
     private List<Todo> itemList = new ArrayList<>();
+    private EditText editText;
 
     public MainTodoListFragment() {
         // Required empty public constructor
@@ -60,7 +64,27 @@ public class MainTodoListFragment extends Fragment {
                 Toast.makeText(requireContext(), TAG, Toast.LENGTH_SHORT).show();
             }
         });
+
+        editText = view.findViewById(R.id.edit_text);
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                switch (actionId) {
+                    case EditorInfo.IME_ACTION_SEARCH:
+//                        Toast.makeText(requireContext(), "IME_ACTION_SEARCH", Toast.LENGTH_SHORT).show();
+
+                        break;
+                    default:
+                        return false;
+
+                }
+                return true;
+            }
+        });
+
         return view;
+
+
     }
 
     @Override
@@ -76,13 +100,16 @@ public class MainTodoListFragment extends Fragment {
 
         recyclerView.setAdapter(adapter);
 
-        mainTodoViewModel.getItems().observe(this, new Observer<List<Todo>>() {
+        mainTodoViewModel.getItems().observe(requireActivity(), new Observer<List<Todo>>() {
             @Override
             public void onChanged(List<Todo> todos) {
                 adapter.setItems(itemList);
 
             }
         });
+
+
+
     }
 
     private static class MainTodoListAdapter extends RecyclerView.Adapter<MainTodoListAdapter.MainViewHolder> {
