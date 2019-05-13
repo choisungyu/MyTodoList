@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="8dp"
+    android:layout_margin="10dp"
     android:orientation="vertical"
     tools:context=".ui.NewTaskFragment">
 
@@ -16,6 +16,8 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:inputType="text"
+        android:imeOptions="actionDone"
         android:hint="여기에 직접 입력" />
 
     <TextView
@@ -23,10 +25,22 @@
         android:layout_height="wrap_content"
         android:text="만기일" />
 
-    <EditText
-        android:hint="날짜가 설정되지 않았습니다."
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:hint="날짜가 설정되지 않았습니다."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:layout_width="wrap_content"
+            tools:src="@color/colorPrimary"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"

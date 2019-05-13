@@ -4,8 +4,13 @@ package com.csg.mytodolist.ui;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -22,6 +27,7 @@ public class NewTaskFragment extends Fragment {
 
     public NewTaskFragment() {
         // Required empty public constructor
+        setHasOptionsMenu(true);
     }
 
 
@@ -33,4 +39,22 @@ public class NewTaskFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_new_task, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.check:
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+                navController.popBackStack();
+                return true;
+
+        }
+        return super.onOptionsItemSelected(item);
+
+    }
 }

@@ -9,5 +9,14 @@
         android:id="@+id/mainTodoListFragment"
         android:name="com.csg.mytodolist.ui.MainTodoListFragment"
         android:label="fragment_main_todo_list"
-        tools:layout="@layout/fragment_main_todo_list" />
+        tools:layout="@layout/fragment_main_todo_list" >
+        <action
+            android:id="@+id/action_mainTodoListFragment_to_newTaskFragment"
+            app:destination="@id/newTaskFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newTaskFragment"
+        android:name="com.csg.mytodolist.ui.NewTaskFragment"
+        android:label="fragment_new_task"
+        tools:layout="@layout/fragment_new_task" />
 </navigation>

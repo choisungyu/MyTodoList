@@ -10,6 +10,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.KeyEvent;
@@ -61,7 +63,9 @@ public class MainTodoListFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 // TODO : 새작업 가기
-                Toast.makeText(requireContext(), TAG, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(requireContext(), TAG, Toast.LENGTH_SHORT).show();
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+                navController.navigate(R.id.action_mainTodoListFragment_to_newTaskFragment);
             }
         });
 
