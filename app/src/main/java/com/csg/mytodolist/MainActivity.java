@@ -23,7 +23,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,17 +33,6 @@ public class MainActivity extends AppCompatActivity {
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(toolbar, navController);
-
-        AppDatabase.getInstance(this).todoDao().insertAll(
-                new Todo("제목1","내용"),
-                new Todo("제목2","내용"),
-                new Todo("제목3","내용"),
-                new Todo("제목4","내용")
-
-        );
-
-
-
 
     }
 }

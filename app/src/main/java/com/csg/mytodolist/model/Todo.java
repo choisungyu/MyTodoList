@@ -1,7 +1,6 @@
 package com.csg.mytodolist.model;
 
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity
@@ -10,16 +9,13 @@ public class Todo {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
-    @Ignore
     private String title;
-    private String content;
 
     public Todo() {
     }
 
-    public Todo(String title, String content) {
+    public Todo(String title) {
         this.title = title;
-        this.content = content;
     }
 
     public int getId() {
@@ -38,11 +34,4 @@ public class Todo {
         this.title = title;
     }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
 }

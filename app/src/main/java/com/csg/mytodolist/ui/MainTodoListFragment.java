@@ -25,6 +25,7 @@ import com.csg.mytodolist.MainTodoViewModel;
 import com.csg.mytodolist.R;
 import com.csg.mytodolist.databinding.ItemTodoListBinding;
 import com.csg.mytodolist.model.Todo;
+import com.csg.mytodolist.repository.AppDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,8 @@ public class MainTodoListFragment extends Fragment {
     private static final String TAG = NewTaskFragment.class.getSimpleName();
     private List<Todo> itemList = new ArrayList<>();
     private EditText editText;
+    private String mTitle;
+    private MainTodoListAdapter mAdapter;
 
     public MainTodoListFragment() {
         // Required empty public constructor
@@ -46,9 +49,6 @@ public class MainTodoListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        itemList.add(new Todo("dd", "dd"));
-        itemList.add(new Todo("dd", "dd"));
-        itemList.add(new Todo("dd", "dd"));
     }
 
     @Override
@@ -71,11 +71,15 @@ public class MainTodoListFragment extends Fragment {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 switch (actionId) {
                     case EditorInfo.IME_ACTION_SEARCH:
-//                        Toast.makeText(requireContext(), "IME_ACTION_SEARCH", Toast.LENGTH_SHORT).show();
 
                         break;
                     default:
-                        return false;
+                        mTitle = editText.getText().toString();
+                        AppDatabase.getInstance(requireActivity()).todoDao().insertAll(
+                                new Todo(mTitle)
+                        );
+
+                        editText.setText("");
 
                 }
                 return true;
@@ -96,18 +100,17 @@ public class MainTodoListFragment extends Fragment {
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        final MainTodoListAdapter adapter = new MainTodoListAdapter();
+        mAdapter = new MainTodoListAdapter();
 
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(mAdapter);
 
         mainTodoViewModel.getItems().observe(requireActivity(), new Observer<List<Todo>>() {
             @Override
             public void onChanged(List<Todo> todos) {
-                adapter.setItems(itemList);
+                mAdapter.setItems(todos);
 
             }
         });
-
 
 
     }
@@ -157,9 +160,6 @@ public class MainTodoListFragment extends Fragment {
         public void onBindViewHolder(@NonNull MainViewHolder holder, int position) {
             Todo item = mItems.get(position);
             // TODO : 데이터를 뷰홀더에 표시하시오
-            //holder.binding.setItemPhoto(item)
-//            holder.titleTextView.setText(item.getTitle());
-//            holder.timeTextView.setText(item.getContent());
             holder.binding.setTodo(item);
         }
 
@@ -171,15 +171,11 @@ public class MainTodoListFragment extends Fragment {
         public static class MainViewHolder extends RecyclerView.ViewHolder {
             // TODO : 뷰홀더 완성하시오
             ItemTodoListBinding binding;
-//            private TextView titleTextView;
-//            private TextView timeTextView;
 
             public MainViewHolder(@NonNull View itemView) {
                 super(itemView);
                 // TODO : 뷰홀더 완성하시오
                 binding = DataBindingUtil.bind(itemView);
-//                titleTextView = itemView.findViewById(R.id.text_view_title);
-//                timeTextView = itemView.findViewById(R.id.text_view_time);
             }
         }
     }
