@@ -2,21 +2,24 @@ package com.csg.mytodolist.ui;
 
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.csg.mytodolist.R;
-import com.google.android.material.snackbar.Snackbar;
+import com.csg.mytodolist.model.Todo;
+import com.csg.mytodolist.repository.AppDatabase;
 
 
 /**
@@ -24,6 +27,7 @@ import com.google.android.material.snackbar.Snackbar;
  */
 public class NewTaskFragment extends Fragment {
 
+    private EditText editText;
 
     public NewTaskFragment() {
         // Required empty public constructor
@@ -36,6 +40,8 @@ public class NewTaskFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_new_task, container, false);
+        editText = view.findViewById(R.id.edit_text);
+
         return view;
     }
 
@@ -50,6 +56,13 @@ public class NewTaskFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.check:
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+
+                String mTitle = editText.getText().toString();
+                AppDatabase.getInstance(requireActivity()).todoDao().insertAll(
+                        new Todo(mTitle)
+                );
+                editText.setText("");
+
                 navController.popBackStack();
                 return true;
 

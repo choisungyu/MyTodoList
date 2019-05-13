@@ -38,8 +38,6 @@ import java.util.List;
  */
 public class MainTodoListFragment extends Fragment {
 
-    private static final String TAG = NewTaskFragment.class.getSimpleName();
-    private List<Todo> itemList = new ArrayList<>();
     private EditText editText;
     private String mTitle;
     private MainTodoListAdapter mAdapter;

@@ -14,10 +14,9 @@
         android:text="해야할 일?" />
 
     <EditText
+        android:id="@+id/edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
-        android:imeOptions="actionDone"
         android:hint="여기에 직접 입력" />
 
     <TextView
