@@ -2,6 +2,7 @@ package com.csg.mytodolist.ui;
 
 
 import android.content.ClipData;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -30,7 +31,9 @@ import com.csg.mytodolist.model.Todo;
 import com.csg.mytodolist.repository.AppDatabase;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -102,7 +105,15 @@ public class MainTodoListFragment extends Fragment {
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        mAdapter = new MainTodoListAdapter();
+        mAdapter = new MainTodoListAdapter(new MainTodoListAdapter.OnItemClickedListener() {
+            @Override
+            public void setOnClicked(View view, int position, Todo model) {
+                Toast.makeText(requireContext(), position + model.toString(), Toast.LENGTH_SHORT).show();
+                mAdapter.setSelect(model);
+                mAdapter.notifyItemChanged(position);
+
+            }
+        });
 
         recyclerView.setAdapter(mAdapter);
 
@@ -110,6 +121,7 @@ public class MainTodoListFragment extends Fragment {
             @Override
             public void onChanged(List<Todo> todos) {
                 mAdapter.setItems(todos);
+
 
             }
         });
@@ -120,24 +132,31 @@ public class MainTodoListFragment extends Fragment {
     private static class MainTodoListAdapter extends RecyclerView.Adapter<MainTodoListAdapter.MainViewHolder> {
 
         private List<Todo> mItems = new ArrayList<>();
+        private Set<Todo> mSelectedModelItem = new HashSet<>();
 
         interface OnItemClickedListener {
-            void setOnClicked(Todo model);
+            void setOnClicked(View view, int position, Todo model);
         }
 
         private OnItemClickedListener mListener;
 
 
-        public MainTodoListAdapter() {
-        }
-
-        public MainTodoListAdapter(OnItemClickedListener listener) {
+        private MainTodoListAdapter(OnItemClickedListener listener) {
             mListener = listener;
         }
 
-        public void setItems(List<Todo> items) {
+        void setItems(List<Todo> items) {
             this.mItems = items;
             notifyDataSetChanged();
+        }
+
+        void setSelect(Todo model) {
+            if (mSelectedModelItem.contains(model)) {
+                mSelectedModelItem.remove(model);
+            } else {
+                //
+                mSelectedModelItem.add(model);
+            }
         }
 
         @NonNull
@@ -145,14 +164,17 @@ public class MainTodoListFragment extends Fragment {
         public MainViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_todo_list, parent, false);
+
             final MainViewHolder viewHolder = new MainViewHolder(view);
-            view.setOnClickListener(new View.OnClickListener() {
+
+            view.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public void onClick(View v) {
+                public boolean onLongClick(View v) {
                     if (mListener != null) {
                         final Todo item = mItems.get(viewHolder.getAdapterPosition());
-                        mListener.setOnClicked(item);
+                        mListener.setOnClicked(v, viewHolder.getAdapterPosition(), item);
                     }
+                    return true;
                 }
             });
             return viewHolder;
@@ -163,6 +185,12 @@ public class MainTodoListFragment extends Fragment {
             Todo item = mItems.get(position);
             // TODO : 데이터를 뷰홀더에 표시하시오
             holder.binding.setTodo(item);
+
+            if (mSelectedModelItem.contains(item)) {
+                holder.itemView.setBackgroundColor(Color.RED);
+            } else {
+                holder.itemView.setBackgroundColor(Color.WHITE);
+            }
         }
 
         @Override

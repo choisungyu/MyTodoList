@@ -25,8 +25,4 @@ public class MainTodoViewModel extends AndroidViewModel {
         return mDb.todoDao().getAll();
     }
 
-    public void completeChanged(Todo todo){
-        todo.setTitle(todo.getTitle());
-        mDb.todoDao().insertAll(todo);
-    }
 }

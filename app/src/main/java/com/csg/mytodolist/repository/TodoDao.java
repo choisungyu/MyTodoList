@@ -2,6 +2,7 @@ package com.csg.mytodolist.repository;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
@@ -15,6 +16,10 @@ public interface TodoDao {
     LiveData<List<Todo>> getAll();
 
     @Insert
-    void insertAll(Todo...todos);
+    void insertAll(Todo... todos);
+
+    @Delete
+    void deleteAll(Todo... todos);
+
 
 }

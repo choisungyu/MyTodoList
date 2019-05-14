@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase;
 
 import com.csg.mytodolist.model.Todo;
 
-@Database(entities = {Todo.class}, version = 1, exportSchema = false)
+@Database(entities = {Todo.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract TodoDao todoDao();
 
