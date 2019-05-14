@@ -11,11 +11,11 @@ import com.csg.mytodolist.repository.AppDatabase;
 
 import java.util.List;
 
-public class MainTodoViewModel extends AndroidViewModel {
+public class MainViewModel extends AndroidViewModel {
 
     private AppDatabase mDb;
 
-    public MainTodoViewModel(@NonNull Application application) {
+    public MainViewModel(@NonNull Application application) {
         super(application);
         mDb = AppDatabase.getInstance(application);
 

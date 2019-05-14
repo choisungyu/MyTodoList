@@ -3,6 +3,16 @@ package com.csg.mytodolist.ui;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.ActionMode;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,19 +24,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.ActionMode;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.csg.mytodolist.MainTodoViewModel;
+import com.csg.mytodolist.MainViewModel;
 import com.csg.mytodolist.R;
 import com.csg.mytodolist.databinding.ItemTodoListBinding;
 import com.csg.mytodolist.model.Todo;
@@ -46,6 +44,46 @@ public class MainTodoListFragment extends Fragment {
     private EditText editText;
     private String mTitle;
     private MainTodoListAdapter mAdapter;
+
+    private ActionMode mActionMode;
+
+    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate(R.menu.menu_long_click, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.check:
+//                        Toast.makeText(, "", Toast.LENGTH_SHORT).show();
+                    mode.finish();
+                    return true;
+                case R.id.share:
+//                        Toast.makeText(, "", Toast.LENGTH_SHORT).show();
+                    mode.finish();
+                case R.id.delete:
+//                        Toast.makeText(, "", Toast.LENGTH_SHORT).show();
+                    mode.finish();
+                    return true;
+                default:
+                    return false;
+
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mActionMode = null;
+        }
+    };
 
     public MainTodoListFragment() {
         // Required empty public constructor
@@ -101,17 +139,43 @@ public class MainTodoListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         //ViewModel-----------
-        MainTodoViewModel mainTodoViewModel = ViewModelProviders.of(requireActivity()).get(MainTodoViewModel.class);
+        MainViewModel mainTodoViewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel.class);
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         mAdapter = new MainTodoListAdapter(new MainTodoListAdapter.OnItemClickedListener() {
             @Override
-            public void setOnLongClicked(View view, int position, Todo model) {
-                Toast.makeText(requireContext(), position + model.toString(), Toast.LENGTH_SHORT).show();
-                mAdapter.setSelect(model);
-                mAdapter.notifyItemChanged(position);
+            public boolean setOnLongClicked(View view, int position, Todo model) {
+                // 액션모드 진입중이면 롱클릭 취소 -> onClicked로 이벤트 전달
+                if (mActionMode != null) {
+                    return false;
+                }
 
+                // 액션모드 진입
+                mActionMode = view.startActionMode(mActionModeCallback);
+                // 현재 아이템 선택, 타이틀 변경
+                mAdapter.setSelect(model, position);
+                mActionMode.setTitle(mAdapter.getSelectedModelItemSize() + "");
+                return true;
+            }
+
+            @Override
+            public void onClicked(int position, Todo model) {
+                if (mActionMode != null) {
+                    // 액션모드 진입
+
+                    // 현재 아이템 선택, 타이틀 변경
+                    mAdapter.setSelect(model, position);
+                    mActionMode.setTitle(mAdapter.getSelectedModelItemSize() + "");
+
+                    // 선택한 아이템 갯수가 0이면 액션모드 나감
+                    if (mAdapter.getSelectedModelItemSize() == 0) {
+                        mActionMode.finish();
+                    }
+                } else {
+                    // 액션모드 진입 전
+
+                }
             }
         });
 
@@ -130,10 +194,10 @@ public class MainTodoListFragment extends Fragment {
 
         private List<Todo> mItems = new ArrayList<>();
         private Set<Todo> mSelectedModelItem = new HashSet<>();
-        private ActionMode mActionMode;
 
         interface OnItemClickedListener {
-            void setOnLongClicked(View view, int position, Todo model);
+            boolean setOnLongClicked(View view, int position, Todo model);
+            void onClicked(int position, Todo model);
         }
 
         private OnItemClickedListener mListener;
@@ -148,13 +212,18 @@ public class MainTodoListFragment extends Fragment {
             notifyDataSetChanged();
         }
 
-        void setSelect(Todo model) {
+        void setSelect(Todo model, int position) {
             // model 이 들어있는가
             if (mSelectedModelItem.contains(model)) {
                 mSelectedModelItem.remove(model);
             } else {
                 mSelectedModelItem.add(model);
             }
+            notifyItemChanged(position);
+        }
+
+        public int getSelectedModelItemSize() {
+            return mSelectedModelItem.size();
         }
 
         @NonNull
@@ -165,78 +234,28 @@ public class MainTodoListFragment extends Fragment {
 
             final MainViewHolder viewHolder = new MainViewHolder(view);
 
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Todo item = mItems.get(viewHolder.getAdapterPosition());
+                    mListener.onClicked(viewHolder.getAdapterPosition(), item);
+                }
+            });
             view.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    if (mListener != null) {
-                        final Todo item = mItems.get(viewHolder.getAdapterPosition());
-                        mListener.setOnLongClicked(v, viewHolder.getAdapterPosition(), item);
-                    }
-
-                    if (mActionMode != null) {
-                        return true;
-                    }
-
-                    if (mActionMode == null) {
-                        mActionMode = view.startActionMode(mActionModeCallback);
-                    }
-
-
-
-                    return true;
+                    final Todo item = mItems.get(viewHolder.getAdapterPosition());
+                    return mListener.setOnLongClicked(v, viewHolder.getAdapterPosition(), item);
                 }
             });
             return viewHolder;
         }
 
-        private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                mode.getMenuInflater().inflate(R.menu.menu_long_click, menu);
-                mode.setTitle(mSelectedModelItem.size() + "");
 
-                if (mSelectedModelItem.size() == 0) {
-                    mActionMode.finish();
-                    mActionMode = null;
-                }
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.check:
-//                        Toast.makeText(, "", Toast.LENGTH_SHORT).show();
-                        mode.finish();
-                        return true;
-                    case R.id.share:
-//                        Toast.makeText(, "", Toast.LENGTH_SHORT).show();
-                        mode.finish();
-                    case R.id.delete:
-//                        Toast.makeText(, "", Toast.LENGTH_SHORT).show();
-                        mode.finish();
-                        return true;
-                    default:
-                        return false;
-
-                }
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-                mActionMode = null;
-            }
-        };
 
         @Override
         public void onBindViewHolder(@NonNull MainViewHolder holder, int position) {
             Todo item = mItems.get(position);
-            // TODO : 데이터를 뷰홀더에 표시하시오
             holder.binding.setTodo(item);
 
             if (mSelectedModelItem.contains(item)) {
@@ -252,12 +271,10 @@ public class MainTodoListFragment extends Fragment {
         }
 
         public static class MainViewHolder extends RecyclerView.ViewHolder {
-            // TODO : 뷰홀더 완성하시오
             ItemTodoListBinding binding;
 
             public MainViewHolder(@NonNull View itemView) {
                 super(itemView);
-                // TODO : 뷰홀더 완성하시오
                 binding = DataBindingUtil.bind(itemView);
             }
         }
