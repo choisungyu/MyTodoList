@@ -153,7 +153,6 @@ public class MainTodoListFragment extends Fragment {
             if (mSelectedModelItem.contains(model)) {
                 mSelectedModelItem.remove(model);
             } else {
-                //
                 mSelectedModelItem.add(model);
             }
         }
@@ -175,10 +174,14 @@ public class MainTodoListFragment extends Fragment {
                     }
 
                     if (mActionMode != null) {
-                        return false;
+                        return true;
                     }
 
-                    mActionMode = view.startActionMode(mActionModeCallback);
+                    if (mActionMode == null) {
+                        mActionMode = view.startActionMode(mActionModeCallback);
+                    }
+
+
 
                     return true;
                 }
@@ -191,7 +194,11 @@ public class MainTodoListFragment extends Fragment {
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 mode.getMenuInflater().inflate(R.menu.menu_long_click, menu);
                 mode.setTitle(mSelectedModelItem.size() + "");
-                // 노티를 어디다 먹여야 하는지
+
+                if (mSelectedModelItem.size() == 0) {
+                    mActionMode.finish();
+                    mActionMode = null;
+                }
                 return true;
             }
 
