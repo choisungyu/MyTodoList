@@ -1,7 +1,6 @@
 package com.csg.mytodolist.ui;
 
 
-import android.content.ClipData;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -15,8 +14,11 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -92,8 +94,6 @@ public class MainTodoListFragment extends Fragment {
         });
 
         return view;
-
-
     }
 
     @Override
@@ -107,7 +107,7 @@ public class MainTodoListFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         mAdapter = new MainTodoListAdapter(new MainTodoListAdapter.OnItemClickedListener() {
             @Override
-            public void setOnClicked(View view, int position, Todo model) {
+            public void setOnLongClicked(View view, int position, Todo model) {
                 Toast.makeText(requireContext(), position + model.toString(), Toast.LENGTH_SHORT).show();
                 mAdapter.setSelect(model);
                 mAdapter.notifyItemChanged(position);
@@ -122,20 +122,18 @@ public class MainTodoListFragment extends Fragment {
             public void onChanged(List<Todo> todos) {
                 mAdapter.setItems(todos);
 
-
             }
         });
-
-
     }
 
     private static class MainTodoListAdapter extends RecyclerView.Adapter<MainTodoListAdapter.MainViewHolder> {
 
         private List<Todo> mItems = new ArrayList<>();
         private Set<Todo> mSelectedModelItem = new HashSet<>();
+        private ActionMode mActionMode;
 
         interface OnItemClickedListener {
-            void setOnClicked(View view, int position, Todo model);
+            void setOnLongClicked(View view, int position, Todo model);
         }
 
         private OnItemClickedListener mListener;
@@ -151,6 +149,7 @@ public class MainTodoListFragment extends Fragment {
         }
 
         void setSelect(Todo model) {
+            // model 이 들어있는가
             if (mSelectedModelItem.contains(model)) {
                 mSelectedModelItem.remove(model);
             } else {
@@ -162,7 +161,7 @@ public class MainTodoListFragment extends Fragment {
         @NonNull
         @Override
         public MainViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
+            final View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_todo_list, parent, false);
 
             final MainViewHolder viewHolder = new MainViewHolder(view);
@@ -172,13 +171,60 @@ public class MainTodoListFragment extends Fragment {
                 public boolean onLongClick(View v) {
                     if (mListener != null) {
                         final Todo item = mItems.get(viewHolder.getAdapterPosition());
-                        mListener.setOnClicked(v, viewHolder.getAdapterPosition(), item);
+                        mListener.setOnLongClicked(v, viewHolder.getAdapterPosition(), item);
                     }
+
+                    if (mActionMode != null) {
+                        return false;
+                    }
+
+                    mActionMode = view.startActionMode(mActionModeCallback);
+
                     return true;
                 }
             });
             return viewHolder;
         }
+
+        private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                mode.getMenuInflater().inflate(R.menu.menu_long_click, menu);
+                mode.setTitle(mSelectedModelItem.size() + "");
+                // 노티를 어디다 먹여야 하는지
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.check:
+//                        Toast.makeText(, "", Toast.LENGTH_SHORT).show();
+                        mode.finish();
+                        return true;
+                    case R.id.share:
+//                        Toast.makeText(, "", Toast.LENGTH_SHORT).show();
+                        mode.finish();
+                    case R.id.delete:
+//                        Toast.makeText(, "", Toast.LENGTH_SHORT).show();
+                        mode.finish();
+                        return true;
+                    default:
+                        return false;
+
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                mActionMode = null;
+            }
+        };
 
         @Override
         public void onBindViewHolder(@NonNull MainViewHolder holder, int position) {
