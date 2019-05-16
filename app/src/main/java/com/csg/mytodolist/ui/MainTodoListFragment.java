@@ -207,7 +207,7 @@ public class MainTodoListFragment extends Fragment {
 
                 } else {
                     // 액션모드 진입 전
-                    // TODO: 수정하기
+                    // TODO: 수정하기 => 그 adapter position 값의 item 으로 이동해서 title 불러오고 그 title 수정하는 거 짜야함.
 //                    AppDatabase.getInstance(requireActivity()).todoDao().update(
 //                            mAdapter.setTodo(position)
 //                    );

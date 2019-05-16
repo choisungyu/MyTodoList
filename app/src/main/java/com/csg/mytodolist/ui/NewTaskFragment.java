@@ -90,11 +90,6 @@ public class NewTaskFragment extends Fragment {
                         new Todo(mTitle)
                 );
                 editText.setText("");
-                // TODO: update 쳐야 되는 곳으로 옮기기
-//                Bundle bundle = getArguments();
-//                if (bundle != null) {
-//                    mTitle = bundle.getString("title");
-
 
                 navController.popBackStack();
                 return true;
