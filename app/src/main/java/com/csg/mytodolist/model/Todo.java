@@ -18,6 +18,10 @@ public class Todo {
         this.title = title;
     }
 
+    public Todo(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }

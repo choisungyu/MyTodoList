@@ -69,8 +69,12 @@ public class MainTodoListFragment extends Fragment {
                 case R.id.share:
 //                        Toast.makeText(, "", Toast.LENGTH_SHORT).show();
                     mode.finish();
+                    return true;
                 case R.id.delete:
-//                        Toast.makeText(, "", Toast.LENGTH_SHORT).show();
+
+                    AppDatabase.getInstance(requireActivity()).todoDao().deleteAll(
+                            mAdapter.getTodoAt()
+                    );
                     mode.finish();
                     return true;
                 default:
@@ -138,18 +142,19 @@ public class MainTodoListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //ViewModel-----------
         MainViewModel mainTodoViewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel.class);
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         mAdapter = new MainTodoListAdapter(new MainTodoListAdapter.OnItemClickedListener() {
             @Override
-            public boolean setOnLongClicked(View view, int position, Todo model) {
+            public boolean onLongClicked(View view, int position, Todo model) {
                 // 액션모드 진입중이면 롱클릭 취소 -> onClicked로 이벤트 전달
-                if (mActionMode != null) {
-                    return false;
-                }
+                // 만약 if 문 없으면 없으나 있으나 맨 처음에 부터 시작되는 로직 ( 진동 계속 먹음 )
+
+//                if (mActionMode != null) {
+//                    return false;
+//                }
 
                 // 액션모드 진입
                 mActionMode = view.startActionMode(mActionModeCallback);
@@ -162,7 +167,7 @@ public class MainTodoListFragment extends Fragment {
             @Override
             public void onClicked(int position, Todo model) {
                 if (mActionMode != null) {
-                    // 액션모드 진입
+                    // 액션모드 진입 == LongClicked
 
                     // 현재 아이템 선택, 타이틀 변경
                     mAdapter.setSelect(model, position);
@@ -181,6 +186,7 @@ public class MainTodoListFragment extends Fragment {
 
         recyclerView.setAdapter(mAdapter);
 
+        // 추가되던 지우던 값 갱신되서 알아서 꽂아주기만 하는 곳
         mainTodoViewModel.getItems().observe(requireActivity(), new Observer<List<Todo>>() {
             @Override
             public void onChanged(List<Todo> todos) {
@@ -196,7 +202,7 @@ public class MainTodoListFragment extends Fragment {
         private Set<Todo> mSelectedModelItem = new HashSet<>();
 
         interface OnItemClickedListener {
-            boolean setOnLongClicked(View view, int position, Todo model);
+            boolean onLongClicked(View view, int position, Todo model);
             void onClicked(int position, Todo model);
         }
 
@@ -207,12 +213,14 @@ public class MainTodoListFragment extends Fragment {
             mListener = listener;
         }
 
-        void setItems(List<Todo> items) {
+        // todo의 item_list 들을 꽂아주는 setter
+        private void setItems(List<Todo> items) {
             this.mItems = items;
             notifyDataSetChanged();
         }
 
-        void setSelect(Todo model, int position) {
+        // todo의 selected(set) 된 model 들만 remove 하거나 add 해주는 setter
+        private void setSelect(Todo model, int position) {
             // model 이 들어있는가
             if (mSelectedModelItem.contains(model)) {
                 mSelectedModelItem.remove(model);
@@ -222,8 +230,12 @@ public class MainTodoListFragment extends Fragment {
             notifyItemChanged(position);
         }
 
-        public int getSelectedModelItemSize() {
+        private int getSelectedModelItemSize() {
             return mSelectedModelItem.size();
+        }
+
+        private Todo getTodoAt(RecyclerView.ViewHolder viewHolder) {
+            return mItems.get(viewHolder.getAdapterPosition());
         }
 
         @NonNull
@@ -245,7 +257,7 @@ public class MainTodoListFragment extends Fragment {
                 @Override
                 public boolean onLongClick(View v) {
                     final Todo item = mItems.get(viewHolder.getAdapterPosition());
-                    return mListener.setOnLongClicked(v, viewHolder.getAdapterPosition(), item);
+                    return mListener.onLongClicked(v, viewHolder.getAdapterPosition(), item);
                 }
             });
             return viewHolder;
@@ -259,7 +271,7 @@ public class MainTodoListFragment extends Fragment {
             holder.binding.setTodo(item);
 
             if (mSelectedModelItem.contains(item)) {
-                holder.itemView.setBackgroundColor(Color.RED);
+                holder.itemView.setBackgroundColor(Color.CYAN);
             } else {
                 holder.itemView.setBackgroundColor(Color.WHITE);
             }
