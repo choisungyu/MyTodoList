@@ -12,7 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -33,46 +37,12 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
 public class NewTaskFragment extends Fragment {
 
     private EditText editText;
+    private ImageView imageView;
 
     public NewTaskFragment() {
         // Required empty public constructor
         setHasOptionsMenu(true);
     }
-
-//    private void init(View view) {
-//        final Calendar cal = Calendar.getInstance();
-//
-//        Log.e(TAG, cal.get(Calendar.YEAR)+"");
-//        Log.e(TAG, cal.get(Calendar.MONTH)+1+"");
-//        Log.e(TAG, cal.get(Calendar.DATE)+"");
-//        Log.e(TAG, cal.get(Calendar.HOUR_OF_DAY)+"");
-//        Log.e(TAG, cal.get(Calendar.MINUTE)+"");
-//
-//        //DATE PICKER DIALOG
-//        view.findViewById(R.id.btn_date_picker_dialog).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                DatePickerDialog dialog = new DatePickerDialog(requireContext(), new DatePickerDialog.OnDateSetListener() {
-//                    @Override
-//                    public void onDateSet(DatePicker datePicker, int year, int month, int date) {
-//
-////                        String msg = String.format("%d 년 %d 월 %d 일", year, month+1, date);
-////                        Toast.makeText(PickerActivity.this, msg, Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//                        , cal.get(Calendar.YEAR)
-//                        , cal.get(Calendar.MONTH)
-//                        , cal.get(Calendar.DATE));
-//
-//                dialog.getDatePicker().setMaxDate(new Date().getTime());    //입력한 날짜 이후로 클릭 안되게 옵션
-//                dialog.show();
-//
-//            }
-//        });
-//
-//
-//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,8 +52,23 @@ public class NewTaskFragment extends Fragment {
 //        init(view);
 
         editText = view.findViewById(R.id.edit_text);
+        imageView = view.findViewById(R.id.btn_date_picker_dialog);
+
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment newFragment = new DatePickerFragment();
+                newFragment.show(requireActivity().getSupportFragmentManager(), "datePicker");
+            }
+
+        });
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
