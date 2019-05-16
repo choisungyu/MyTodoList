@@ -38,6 +38,7 @@ public class NewTaskFragment extends Fragment {
 
     private EditText editText;
     private ImageView imageView;
+    private String mTitle;
 
     public NewTaskFragment() {
         // Required empty public constructor
@@ -49,8 +50,8 @@ public class NewTaskFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_new_task, container, false);
-//        init(view);
 
+        // 새로 입력 받은 값
         editText = view.findViewById(R.id.edit_text);
         imageView = view.findViewById(R.id.btn_date_picker_dialog);
 
@@ -83,11 +84,17 @@ public class NewTaskFragment extends Fragment {
             case R.id.check:
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
 
+                // newTask 에서도 삽입 있어야 함
                 String mTitle = editText.getText().toString();
                 AppDatabase.getInstance(requireActivity()).todoDao().insertAll(
                         new Todo(mTitle)
                 );
                 editText.setText("");
+                // TODO: update 쳐야 되는 곳으로 옮기기
+//                Bundle bundle = getArguments();
+//                if (bundle != null) {
+//                    mTitle = bundle.getString("title");
+
 
                 navController.popBackStack();
                 return true;

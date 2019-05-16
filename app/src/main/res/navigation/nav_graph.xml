@@ -14,7 +14,7 @@
             android:id="@+id/action_mainTodoListFragment_to_newTaskFragment"
             app:destination="@id/newTaskFragment" />
         <action
-            android:id="@+id/action_mainTodoListFragment_to_newTaskFragment2"
+            android:id="@+id/action_mainTodoListFragment_to_updateTaskFragment"
             app:destination="@id/updateTaskFragment" />
     </fragment>
     <fragment
@@ -24,7 +24,7 @@
         tools:layout="@layout/fragment_new_task" />
     <fragment
         android:id="@+id/updateTaskFragment"
-        android:name="com.csg.mytodolist.ui.NewTaskFragment"
+        android:name="com.csg.mytodolist.ui.UpdateTaskFragment"
         android:label="수정하기"
         tools:layout="@layout/fragment_update_task" />
 </navigation>

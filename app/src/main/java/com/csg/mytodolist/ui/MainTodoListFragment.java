@@ -17,6 +17,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -131,7 +132,6 @@ public class MainTodoListFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 // TODO : 새작업 가기
-//                Toast.makeText(requireContext(), TAG, Toast.LENGTH_SHORT).show();
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
                 navController.navigate(R.id.action_mainTodoListFragment_to_newTaskFragment);
             }
@@ -173,8 +173,8 @@ public class MainTodoListFragment extends Fragment {
             @Override
             public boolean onLongClicked(View view, int position, Todo model) {
                 // 액션모드 진입중이면 롱클릭 취소 -> onClicked로 이벤트 전달
-                // 만약 if 문 없으면 없으나 있으나 맨 처음에 부터 시작되는 로직 ( 진동 계속 먹음 )
 
+                // 만약 if 문 없으면 없으나 있으나 맨 처음에 부터 시작되는 로직 ( 진동 계속 먹음 )
 //                if (mActionMode != null) {
 //                    return false;
 //                }
@@ -207,6 +207,17 @@ public class MainTodoListFragment extends Fragment {
 
                 } else {
                     // 액션모드 진입 전
+                    // TODO: 수정하기
+//                    AppDatabase.getInstance(requireActivity()).todoDao().update(
+//                            mAdapter.setTodo(position)
+//                    );
+
+                    // 번들로 담아서 보내줘야 함.
+                    Bundle bundle = new Bundle();
+                    bundle.getString("title", mTitle);
+//
+                    NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+                    navController.navigate(R.id.action_mainTodoListFragment_to_updateTaskFragment, bundle);
 
                 }
             }
@@ -231,6 +242,7 @@ public class MainTodoListFragment extends Fragment {
 
         interface OnItemClickedListener {
             boolean onLongClicked(View view, int position, Todo model);
+
             void onClicked(int position, Todo model);
         }
 
@@ -245,6 +257,11 @@ public class MainTodoListFragment extends Fragment {
         private void setItems(List<Todo> items) {
             this.mItems = items;
             notifyDataSetChanged();
+        }
+
+        // update 용
+        private Todo setTodo(int position) {
+            return mItems.get(position);
         }
 
         // todo의 selected(set) 된 model 들만 remove 하거나 add 해주는 setter
@@ -263,13 +280,10 @@ public class MainTodoListFragment extends Fragment {
             return mSelectedModelItem.size();
         }
 
-        private Todo getTodoAt(RecyclerView.ViewHolder viewHolder) {
-            return mItems.get(viewHolder.getAdapterPosition());
-        }
-
+        // delete 용
         private List<Todo> getSelectedList() {
             List<Todo> result = new ArrayList<>();
-            for (Todo todo: mItems) {
+            for (Todo todo : mItems) {
                 if (mSelectedModelItem.contains(todo)) {
                     result.add(todo);
                 }
@@ -301,7 +315,6 @@ public class MainTodoListFragment extends Fragment {
             });
             return viewHolder;
         }
-
 
 
         @Override

@@ -5,6 +5,7 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.csg.mytodolist.model.Todo;
 
@@ -20,6 +21,9 @@ public interface TodoDao {
 
     @Delete
     void deleteAll(List<Todo> todos);
+
+    @Update
+    void update(Todo todo);
 
 
 }
