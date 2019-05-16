@@ -40,7 +40,6 @@
             android:id="@+id/btn_date_picker_dialog"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:icon="@drawable/ic_event_black_24dp"
             app:srcCompat="@drawable/ic_event_black_24dp" />
 
     </LinearLayout>
