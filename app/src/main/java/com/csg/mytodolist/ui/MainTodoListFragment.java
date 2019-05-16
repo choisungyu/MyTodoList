@@ -1,8 +1,11 @@
 package com.csg.mytodolist.ui;
 
 
+import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -11,11 +14,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -31,10 +36,13 @@ import com.csg.mytodolist.model.Todo;
 import com.csg.mytodolist.repository.AppDatabase;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 
 /**
@@ -61,7 +69,7 @@ public class MainTodoListFragment extends Fragment {
         }
 
         @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.check:
 //                        Toast.makeText(, "", Toast.LENGTH_SHORT).show();
@@ -73,12 +81,30 @@ public class MainTodoListFragment extends Fragment {
                     return true;
                 case R.id.delete:
 
-                    AppDatabase.getInstance(requireActivity()).todoDao().deleteAll(
-                            mAdapter.getSelectedList()
-                    );
-                    mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
-                    mode.finish();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                    builder.setTitle("확실한가요?");
+                    builder.setMessage("작업을 삭제 하시겠습니까?");
+                    builder.setCancelable(false);
+                    builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User clicked OK button
+                            AppDatabase.getInstance(requireActivity()).todoDao().deleteAll(
+                                    mAdapter.getSelectedList()
+                            );
+                            mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
+                            mode.finish();
+                        }
+                    });
+                    builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                            dialog.cancel();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();    // 알림창 객체 생성
+                    dialog.show();
                     return true;
+
                 default:
                     return false;
 
@@ -93,11 +119,6 @@ public class MainTodoListFragment extends Fragment {
 
     public MainTodoListFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -237,6 +258,7 @@ public class MainTodoListFragment extends Fragment {
             notifyItemChanged(position);
         }
 
+        // 아예 안 쓰이게 되는거
         private int getSelectedModelItemSize() {
             return mSelectedModelItem.size();
         }

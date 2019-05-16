@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="15dp"
     android:orientation="vertical"
     tools:context=".ui.NewTaskFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -20,9 +19,17 @@
         android:layout_height="wrap_content"
         android:hint="여기에 직접 입력" />
 
+    <CheckBox
+        android:id="@+id/check_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="작업을 완료하시겠습니까?"
+        android:layout_marginTop="8dp" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="만기일" />
 
     <LinearLayout
@@ -32,15 +39,14 @@
 
         <EditText
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:hint="날짜가 설정되지 않았습니다." />
 
         <ImageView
             android:id="@+id/btn_date_picker_dialog"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:icon="@drawable/ic_event_black_24dp"
             app:srcCompat="@drawable/ic_event_black_24dp" />
 
     </LinearLayout>
