@@ -76,6 +76,7 @@ public class MainTodoListFragment extends Fragment {
                     AppDatabase.getInstance(requireActivity()).todoDao().deleteAll(
                             mAdapter.getSelectedList()
                     );
+                    mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
                     mode.finish();
                     return true;
                 default:
@@ -161,7 +162,10 @@ public class MainTodoListFragment extends Fragment {
                 mActionMode = view.startActionMode(mActionModeCallback);
                 // 현재 아이템 선택, 타이틀 변경
                 mAdapter.setSelect(model, position);
-                mActionMode.setTitle(mAdapter.getSelectedModelItemSize() + "");
+//                mActionMode.setTitle(mAdapter.getSelectedModelItemSize() + "");
+                mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
+
+
                 return true;
             }
 
@@ -172,12 +176,14 @@ public class MainTodoListFragment extends Fragment {
 
                     // 현재 아이템 선택, 타이틀 변경
                     mAdapter.setSelect(model, position);
-                    mActionMode.setTitle(mAdapter.getSelectedModelItemSize() + "");
+//                    mActionMode.setTitle(mAdapter.getSelectedModelItemSize() + "");
+                    mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
 
                     // 선택한 아이템 갯수가 0이면 액션모드 나감
-                    if (mAdapter.getSelectedModelItemSize() == 0) {
+                    if (mAdapter.getSelectedList().size() == 0) {
                         mActionMode.finish();
                     }
+
                 } else {
                     // 액션모드 진입 전
 
