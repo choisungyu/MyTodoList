@@ -73,7 +73,7 @@ public class MainTodoListFragment extends Fragment {
                 case R.id.delete:
 
                     AppDatabase.getInstance(requireActivity()).todoDao().deleteAll(
-                            mAdapter.getTodoAt()
+//                            mAdapter.getTodoAt()
                     );
                     mode.finish();
                     return true;
