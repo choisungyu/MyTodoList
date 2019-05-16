@@ -31,6 +31,7 @@ import com.csg.mytodolist.model.Todo;
 import com.csg.mytodolist.repository.AppDatabase;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -73,7 +74,7 @@ public class MainTodoListFragment extends Fragment {
                 case R.id.delete:
 
                     AppDatabase.getInstance(requireActivity()).todoDao().deleteAll(
-//                            mAdapter.getTodoAt()
+                            mAdapter.getSelectedList()
                     );
                     mode.finish();
                     return true;
@@ -236,6 +237,16 @@ public class MainTodoListFragment extends Fragment {
 
         private Todo getTodoAt(RecyclerView.ViewHolder viewHolder) {
             return mItems.get(viewHolder.getAdapterPosition());
+        }
+
+        private List<Todo> getSelectedList() {
+            List<Todo> result = new ArrayList<>();
+            for (Todo todo: mItems) {
+                if (mSelectedModelItem.contains(todo)) {
+                    result.add(todo);
+                }
+            }
+            return result;
         }
 
         @NonNull

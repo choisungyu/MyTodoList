@@ -19,7 +19,7 @@ public interface TodoDao {
     void insertAll(Todo... todos);
 
     @Delete
-    void deleteAll(Todo... todos);
+    void deleteAll(List<Todo> todos);
 
 
 }
