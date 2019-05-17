@@ -25,5 +25,7 @@ public interface TodoDao {
     @Update
     void update(Todo todo);
 
+    @Query("SELECT * FROM todo WHERE id = :id")
+    Todo getTodo(int id);
 
 }

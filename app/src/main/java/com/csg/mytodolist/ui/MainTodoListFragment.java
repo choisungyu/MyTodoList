@@ -1,11 +1,9 @@
 package com.csg.mytodolist.ui;
 
 
-import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -14,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,13 +34,9 @@ import com.csg.mytodolist.model.Todo;
 import com.csg.mytodolist.repository.AppDatabase;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static androidx.constraintlayout.widget.Constraints.TAG;
 
 
 /**
@@ -141,18 +134,14 @@ public class MainTodoListFragment extends Fragment {
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                switch (actionId) {
-                    case EditorInfo.IME_ACTION_SEARCH:
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                } else {
+                    mTitle = editText.getText().toString();
+                    AppDatabase.getInstance(requireActivity()).todoDao().insertAll(
+                            new Todo(mTitle)
+                    );
 
-                        break;
-                    default:
-                        mTitle = editText.getText().toString();
-                        AppDatabase.getInstance(requireActivity()).todoDao().insertAll(
-                                new Todo(mTitle)
-                        );
-
-                        editText.setText("");
-
+                    editText.setText("");
                 }
                 return true;
             }
@@ -207,14 +196,10 @@ public class MainTodoListFragment extends Fragment {
 
                 } else {
                     // 액션모드 진입 전
-                    // TODO: 수정하기 => 그 adapter position 값의 item 으로 이동해서 title 불러오고 그 title 수정하는 거 짜야함.
-//                    AppDatabase.getInstance(requireActivity()).todoDao().update(
-//                            mAdapter.setTodo(position)
-//                    );
 
                     // 번들로 담아서 보내줘야 함.
                     Bundle bundle = new Bundle();
-                    bundle.getString("title", mTitle);
+                    bundle.putInt("id", model.getId());
 //
                     NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
                     navController.navigate(R.id.action_mainTodoListFragment_to_updateTaskFragment, bundle);
