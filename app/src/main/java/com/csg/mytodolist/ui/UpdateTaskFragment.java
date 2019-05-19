@@ -45,7 +45,7 @@ public class UpdateTaskFragment extends Fragment {
             int id = bundle.getInt("id");
 
             mTodo = AppDatabase.getInstance(requireContext()).todoDao()
-                    .getTodo(id);
+                    .getTodoById(id);
             mEditText.setText(mTodo.getTitle());
         }
 
@@ -63,7 +63,6 @@ public class UpdateTaskFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.check) {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
-            // Todo : 수정한 내용과 함께 저장하면서(!=insert(n+1번째 자리) => update(그 자리로 가야함) ) 백스택한다.
             mTodo.setTitle(mEditText.getText().toString());
             AppDatabase.getInstance(requireContext()).todoDao().update(mTodo);
 

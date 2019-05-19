@@ -200,7 +200,7 @@ public class MainTodoListFragment extends Fragment {
                     // 번들로 담아서 보내줘야 함.
                     Bundle bundle = new Bundle();
                     bundle.putInt("id", model.getId());
-//
+
                     NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
                     navController.navigate(R.id.action_mainTodoListFragment_to_updateTaskFragment, bundle);
 
@@ -242,11 +242,6 @@ public class MainTodoListFragment extends Fragment {
         private void setItems(List<Todo> items) {
             this.mItems = items;
             notifyDataSetChanged();
-        }
-
-        // update 용
-        private Todo setTodo(int position) {
-            return mItems.get(position);
         }
 
         // todo의 selected(set) 된 model 들만 remove 하거나 add 해주는 setter
