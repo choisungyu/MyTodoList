@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -119,6 +120,9 @@ public class MainTodoListFragment extends Fragment {
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
+            Toast.makeText(requireContext(), "종료", Toast.LENGTH_SHORT).show();
+            mAdapter.mSelectedModelItem.clear();
+            mAdapter.notifyDataSetChanged();
             mActionMode = null;
         }
     };
