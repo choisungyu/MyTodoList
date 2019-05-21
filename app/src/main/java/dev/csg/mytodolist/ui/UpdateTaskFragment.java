@@ -1,4 +1,4 @@
-package com.csg.mytodolist.ui;
+package dev.csg.mytodolist.ui;
 
 
 import android.os.Bundle;
@@ -15,9 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.csg.mytodolist.R;
-import com.csg.mytodolist.model.Todo;
-import com.csg.mytodolist.repository.AppDatabase;
+import dev.csg.mytodolist.R;
+import dev.csg.mytodolist.model.Todo;
+import dev.csg.mytodolist.repository.AppDatabase;
 
 /**
  * A simple {@link Fragment} subclass.

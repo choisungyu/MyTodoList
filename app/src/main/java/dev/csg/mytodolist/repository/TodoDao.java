@@ -1,4 +1,4 @@
-package com.csg.mytodolist.repository;
+package dev.csg.mytodolist.repository;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -7,7 +7,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.csg.mytodolist.model.Todo;
+import dev.csg.mytodolist.model.Todo;
 
 import java.util.List;
 

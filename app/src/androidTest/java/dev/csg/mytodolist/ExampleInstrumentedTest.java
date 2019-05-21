@@ -1,4 +1,4 @@
-package com.csg.mytodolist;
+package dev.csg.mytodolist;
 
 import android.content.Context;
 

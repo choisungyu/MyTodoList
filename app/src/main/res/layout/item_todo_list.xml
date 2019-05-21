@@ -6,7 +6,7 @@
     <data>
         <variable
             name="todo"
-            type="com.csg.mytodolist.model.Todo" />
+            type="dev.csg.mytodolist.model.Todo" />
     </data>
 
     <androidx.cardview.widget.CardView

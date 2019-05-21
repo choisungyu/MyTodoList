@@ -1,4 +1,4 @@
-package com.csg.mytodolist.repository;
+package dev.csg.mytodolist.repository;
 
 import android.content.Context;
 
@@ -6,7 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import com.csg.mytodolist.model.Todo;
+import dev.csg.mytodolist.model.Todo;
 
 @Database(entities = {Todo.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/mainTodoListFragment"
-        android:name="com.csg.mytodolist.ui.MainTodoListFragment"
+        android:name="dev.csg.mytodolist.ui.MainTodoListFragment"
         android:label="fragment_main_todo_list"
         tools:layout="@layout/fragment_main_todo_list" >
         <action
@@ -19,12 +19,12 @@
     </fragment>
     <fragment
         android:id="@+id/newTaskFragment"
-        android:name="com.csg.mytodolist.ui.NewTaskFragment"
+        android:name="dev.csg.mytodolist.ui.NewTaskFragment"
         android:label="새 작업"
         tools:layout="@layout/fragment_new_task" />
     <fragment
         android:id="@+id/updateTaskFragment"
-        android:name="com.csg.mytodolist.ui.UpdateTaskFragment"
+        android:name="dev.csg.mytodolist.ui.UpdateTaskFragment"
         android:label="수정하기"
         tools:layout="@layout/fragment_update_task" />
 </navigation>

@@ -1,4 +1,4 @@
-package com.csg.mytodolist.ui;
+package dev.csg.mytodolist.ui;
 
 
 import android.content.DialogInterface;
@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,11 +26,11 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.csg.mytodolist.MainViewModel;
-import com.csg.mytodolist.R;
-import com.csg.mytodolist.databinding.ItemTodoListBinding;
-import com.csg.mytodolist.model.Todo;
-import com.csg.mytodolist.repository.AppDatabase;
+import dev.csg.mytodolist.MainViewModel;
+import dev.csg.mytodolist.R;
+import dev.csg.mytodolist.databinding.ItemTodoListBinding;
+import dev.csg.mytodolist.model.Todo;
+import dev.csg.mytodolist.repository.AppDatabase;
 
 import java.util.ArrayList;
 import java.util.HashSet;

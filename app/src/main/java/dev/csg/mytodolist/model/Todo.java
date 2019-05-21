@@ -1,4 +1,4 @@
-package com.csg.mytodolist.model;
+package dev.csg.mytodolist.model;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;

@@ -18,4 +18,11 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="ActionModeTheme" parent="AppTheme">
+        <item name="actionModeStyle">@color/colorPrimary</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeCloseDrawable">@color/colorPrimaryDark</item>
+        <item name="actionMenuTextColor">@color/colorAccent</item>
+    </style>
+
 </resources>

@@ -1,9 +1,12 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.csg.mytodolist"
+        applicationId "dev.csg.mytodolist"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
@@ -28,6 +31,9 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.firebase:firebase-core:16.0.9'
+    // Add dependency
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'

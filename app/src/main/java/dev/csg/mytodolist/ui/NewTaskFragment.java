@@ -1,16 +1,13 @@
-package com.csg.mytodolist.ui;
+package dev.csg.mytodolist.ui;
 
 
-import android.app.DatePickerDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -21,14 +18,9 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import com.csg.mytodolist.R;
-import com.csg.mytodolist.model.Todo;
-import com.csg.mytodolist.repository.AppDatabase;
-
-import java.util.Calendar;
-import java.util.Date;
-
-import static androidx.constraintlayout.widget.Constraints.TAG;
+import dev.csg.mytodolist.R;
+import dev.csg.mytodolist.model.Todo;
+import dev.csg.mytodolist.repository.AppDatabase;
 
 
 /**

@@ -1,4 +1,4 @@
-package com.csg.mytodolist;
+package dev.csg.mytodolist;
 
 import android.app.Application;
 
@@ -6,8 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.csg.mytodolist.model.Todo;
-import com.csg.mytodolist.repository.AppDatabase;
+import dev.csg.mytodolist.model.Todo;
+import dev.csg.mytodolist.repository.AppDatabase;
 
 import java.util.List;
 
