@@ -37,4 +37,14 @@
         android:layout_height="wrap_content"
         android:hint="여기에 빠른 작업 입력" />
 
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/ad_View"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        ads:adSize="SMART_BANNER"
+        ads:adUnitId="ca-app-pub-8544040742728303/4396028202">
+    </com.google.android.gms.ads.AdView>
+
 </LinearLayout>

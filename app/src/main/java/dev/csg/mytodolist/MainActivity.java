@@ -2,8 +2,6 @@ package dev.csg.mytodolist;
 
 import android.os.Bundle;
 
-import dev.csg.mytodolist.R;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;

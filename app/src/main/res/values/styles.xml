@@ -12,17 +12,22 @@
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:actionModeBackground">@color/colorPrimaryDark</item>
+        <item name="android:windowActionModeOverlay">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <!--<style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />-->
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <!--<style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />-->
 
-    <style name="ActionModeTheme" parent="AppTheme">
-        <item name="actionModeStyle">@color/colorPrimary</item>
-        <item name="windowActionModeOverlay">true</item>
-        <item name="actionModeCloseDrawable">@color/colorPrimaryDark</item>
-        <item name="actionMenuTextColor">@color/colorAccent</item>
-    </style>
+    <!--<style name="Widget.ActionMode" parent="@style/Widget.AppCompat.ActionMode">-->
+        <!--<item name="background">@color/background_material_dark</item>-->
+        <!--<item name="backgroundSplit">@color/accent_material_light</item>-->
+        <!--<item name="titleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionMode.Title.Inverse</item>-->
+        <!--<item name="subtitleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionMode.Subtitle.Inverse</item>-->
+    <!--</style>-->
+    <!--<style name="Theme.MyApp.Light.DarkActionBar" parent="Theme.AppCompat.Light.NoActionBar">-->
+        <!--<item name="actionModeStyle">@style/Widget.ActionMode</item>-->
+    <!--</style>-->
 
 </resources>

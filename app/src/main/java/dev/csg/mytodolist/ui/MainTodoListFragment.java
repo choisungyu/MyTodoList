@@ -26,6 +26,10 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
 import dev.csg.mytodolist.MainViewModel;
 import dev.csg.mytodolist.R;
 import dev.csg.mytodolist.databinding.ItemTodoListBinding;
@@ -43,11 +47,20 @@ import java.util.Set;
  */
 public class MainTodoListFragment extends Fragment {
 
-    private EditText editText;
+    private EditText mEditText;
     private String mTitle;
     private MainTodoListAdapter mAdapter;
 
     private ActionMode mActionMode;
+    private AdView mAdView;
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
+
+    }
 
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
         @Override
@@ -129,18 +142,18 @@ public class MainTodoListFragment extends Fragment {
             }
         });
 
-        editText = view.findViewById(R.id.edit_text);
-        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mEditText = view.findViewById(R.id.edit_text);
+        mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 } else {
-                    mTitle = editText.getText().toString();
+                    mTitle = mEditText.getText().toString();
                     AppDatabase.getInstance(requireActivity()).todoDao().insertAll(
                             new Todo(mTitle)
                     );
 
-                    editText.setText("");
+                    mEditText.setText("");
                 }
                 return true;
             }
@@ -152,6 +165,12 @@ public class MainTodoListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        MobileAds.initialize(requireContext(), "ca-app-pub-8544040742728303~7451111542");
+
+        mAdView = view.findViewById(R.id.ad_View);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 
         MainViewModel mainTodoViewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel.class);
 
