@@ -2,6 +2,7 @@ package dev.csg.mytodolist.ui;
 
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.ActionMode;
@@ -83,7 +84,7 @@ public class MainTodoListFragment extends Fragment {
                     mode.finish();
                     return true;
                 case R.id.share:
-//                        Toast.makeText(, "", Toast.LENGTH_SHORT).show();
+//                    shareNote();
                     mode.finish();
                     return true;
                 case R.id.delete:
@@ -92,21 +93,17 @@ public class MainTodoListFragment extends Fragment {
                     builder.setTitle("확실한가요?");
                     builder.setMessage("작업을 삭제 하시겠습니까?");
                     builder.setCancelable(false);
-                    builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // User clicked OK button
-                            AppDatabase.getInstance(requireActivity()).todoDao().deleteAll(
-                                    mAdapter.getSelectedList()
-                            );
-                            mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
-                            mode.finish();
-                        }
+                    builder.setPositiveButton("예", (dialog, id) -> {
+                        // User clicked OK button
+                        AppDatabase.getInstance(requireActivity()).todoDao().deleteAll(
+                                mAdapter.getSelectedList()
+                        );
+                        mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
+                        mode.finish();
                     });
-                    builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // User cancelled the dialog
-                            dialog.cancel();
-                        }
+                    builder.setNegativeButton("아니오", (dialog, id) -> {
+                        // User cancelled the dialog
+                        dialog.cancel();
                     });
                     AlertDialog dialog = builder.create();    // 알림창 객체 생성
                     dialog.show();
@@ -127,6 +124,7 @@ public class MainTodoListFragment extends Fragment {
         }
     };
 
+
     public MainTodoListFragment() {
         // Required empty public constructor
     }
@@ -137,30 +135,24 @@ public class MainTodoListFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main_todo_list, container, false);
 
-        view.findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // TODO : 새작업 가기
-                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
-                navController.navigate(R.id.action_mainTodoListFragment_to_newTaskFragment);
-            }
+        view.findViewById(R.id.fab).setOnClickListener(view1 -> {
+            // TODO : 새작업 가기
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+            navController.navigate(R.id.action_mainTodoListFragment_to_newTaskFragment);
         });
 
         mEditText = view.findViewById(R.id.edit_text);
-        mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                } else {
-                    mTitle = mEditText.getText().toString();
-                    AppDatabase.getInstance(requireActivity()).todoDao().insertAll(
-                            new Todo(mTitle)
-                    );
+        mEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            } else {
+                mTitle = mEditText.getText().toString();
+                AppDatabase.getInstance(requireActivity()).todoDao().insertAll(
+                        new Todo(mTitle)
+                );
 
-                    mEditText.setText("");
-                }
-                return true;
+                mEditText.setText("");
             }
+            return true;
         });
 
         return view;
@@ -194,7 +186,6 @@ public class MainTodoListFragment extends Fragment {
                 mActionMode = view.startActionMode(mActionModeCallback);
                 // 현재 아이템 선택, 타이틀 변경
                 mAdapter.setSelect(model, position);
-//                mActionMode.setTitle(mAdapter.getSelectedModelItemSize() + "");
                 mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
 
 
@@ -208,7 +199,6 @@ public class MainTodoListFragment extends Fragment {
 
                     // 현재 아이템 선택, 타이틀 변경
                     mAdapter.setSelect(model, position);
-//                    mActionMode.setTitle(mAdapter.getSelectedModelItemSize() + "");
                     mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
 
                     // 선택한 아이템 갯수가 0이면 액션모드 나감
@@ -233,13 +223,7 @@ public class MainTodoListFragment extends Fragment {
         recyclerView.setAdapter(mAdapter);
 
         // 추가되던 지우던 값 갱신되서 알아서 꽂아주기만 하는 곳
-        mainTodoViewModel.getItems().observe(requireActivity(), new Observer<List<Todo>>() {
-            @Override
-            public void onChanged(List<Todo> todos) {
-                mAdapter.setItems(todos);
-
-            }
-        });
+        mainTodoViewModel.getItems().observe(requireActivity(), todos -> mAdapter.setItems(todos));
     }
 
     private static class MainTodoListAdapter extends RecyclerView.Adapter<MainTodoListAdapter.MainViewHolder> {
@@ -277,11 +261,6 @@ public class MainTodoListFragment extends Fragment {
             notifyItemChanged(position);
         }
 
-        // 아예 안 쓰이게 되는거
-        private int getSelectedModelItemSize() {
-            return mSelectedModelItem.size();
-        }
-
         // delete 용
         private List<Todo> getSelectedList() {
             List<Todo> result = new ArrayList<>();
@@ -301,19 +280,13 @@ public class MainTodoListFragment extends Fragment {
 
             final MainViewHolder viewHolder = new MainViewHolder(view);
 
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final Todo item = mItems.get(viewHolder.getAdapterPosition());
-                    mListener.onClicked(viewHolder.getAdapterPosition(), item);
-                }
+            view.setOnClickListener(v -> {
+                final Todo item = mItems.get(viewHolder.getAdapterPosition());
+                mListener.onClicked(viewHolder.getAdapterPosition(), item);
             });
-            view.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    final Todo item = mItems.get(viewHolder.getAdapterPosition());
-                    return mListener.onLongClicked(v, viewHolder.getAdapterPosition(), item);
-                }
+            view.setOnLongClickListener(v -> {
+                final Todo item = mItems.get(viewHolder.getAdapterPosition());
+                return mListener.onLongClicked(v, viewHolder.getAdapterPosition(), item);
             });
             return viewHolder;
         }

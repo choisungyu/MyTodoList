@@ -53,13 +53,9 @@ public class NewTaskFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogFragment newFragment = new DatePickerFragment();
-                newFragment.show(requireActivity().getSupportFragmentManager(), "datePicker");
-            }
-
+        imageView.setOnClickListener(v -> {
+            DialogFragment newFragment = new DatePickerFragment();
+            newFragment.show(requireActivity().getSupportFragmentManager(), "datePicker");
         });
         super.onViewCreated(view, savedInstanceState);
     }
