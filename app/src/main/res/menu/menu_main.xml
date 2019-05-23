@@ -3,8 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.csg.mytodolist.dev.csg.mytodolist.MainActivity">
     <item
-        android:id="@+id/action_basic"
-        android:orderInCategory="100"
+        android:id="@+id/action_search"
+        android:orderInCategory="101"
         android:title="@string/action_settings"
-        app:showAsAction="ifRoom" />
+        android:icon="@drawable/ic_search_white"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="always" />
 </menu>

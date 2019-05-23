@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -76,7 +78,7 @@ public class MainTodoListFragment extends Fragment {
         public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.check:
-//                        Toast.makeText(, "", Toast.LENGTH_SHORT).show();
+
                     mode.finish();
                     return true;
                 case R.id.share:
@@ -126,19 +128,6 @@ public class MainTodoListFragment extends Fragment {
         dialog.show();
     }
 
-//    private List<Todo> getSelectedIdList() {
-//        List<Todo> getSelectedIdResults = new ArrayList<>();
-
-//        for (Todo todo : mAdapter.getSelectedList()) {
-//            mAdapterAddIds.add(todo.getId());
-//
-//            List<Todo> idLists = AppDatabase.getInstance(requireContext()).todoDao().loadAllByIds(mAdapterAddIds);
-//            getSelectedIdResults.addAll(idLists);
-//
-//        }
-//
-//        return getSelectedIdResults;
-//    }
 
     private String getByIdTitle() {
 
@@ -154,8 +143,6 @@ public class MainTodoListFragment extends Fragment {
 
     private void shareNote() {
 
-        Toast.makeText(requireContext(), "" + getByIdTitle(), Toast.LENGTH_SHORT).show();
-
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
 
@@ -167,6 +154,25 @@ public class MainTodoListFragment extends Fragment {
 
     public MainTodoListFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_main, menu);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+
+        searchView.setQueryHint("탐색");
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.check:
+        }
+        return super.onOptionsItemSelected(item);
+
     }
 
     @Override
@@ -243,6 +249,7 @@ public class MainTodoListFragment extends Fragment {
 
                     // 선택한 아이템 갯수가 0이면 액션모드 나감
                     if (mAdapter.getSelectedList().size() == 0) {
+                        mActionMode.setTitle("");
                         mActionMode.finish();
                     }
 
