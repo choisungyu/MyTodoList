@@ -126,23 +126,41 @@ public class MainTodoListFragment extends Fragment {
         dialog.show();
     }
 
-    private void shareNote() {
-//        Bundle bundle = getArguments();
-//        if (bundle != null) {
+//    private List<Todo> getSelectedIdList() {
+//        List<Todo> getSelectedIdResults = new ArrayList<>();
+
+//        for (Todo todo : mAdapter.getSelectedList()) {
+//            mAdapterAddIds.add(todo.getId());
 //
-//            bundleInt = bundle.getInt("id");
-        Todo todo = AppDatabase.getInstance(requireContext()).todoDao().getTodo();
-        int id = todo.getId();
+//            List<Todo> idLists = AppDatabase.getInstance(requireContext()).todoDao().loadAllByIds(mAdapterAddIds);
+//            getSelectedIdResults.addAll(idLists);
+//
+//        }
+//
+//        return getSelectedIdResults;
+//    }
 
-        Todo mTodo = AppDatabase.getInstance(requireContext()).todoDao().getTodoById(id);
-        Toast.makeText(requireContext(), "" + mTodo.getTitle(), Toast.LENGTH_SHORT).show();
+    private String getByIdTitle() {
 
+        StringBuilder sb = new StringBuilder();
+        for (Todo todo : mAdapter.getSelectedList()) {
+            String title = todo.getTitle();
+
+            sb.append("- ").append(title).append("\n");
+        }
+        return sb.substring(1, sb.length() -1);
+    }
+
+
+    private void shareNote() {
+
+        Toast.makeText(requireContext(), "" + getByIdTitle(), Toast.LENGTH_SHORT).show();
 
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
 
-        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "할 일 : ");
-        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, mTodo.getTitle());
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "할 일 : \n");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, getByIdTitle());
         startActivity(Intent.createChooser(sharingIntent, "공 유"));
     }
 
@@ -158,7 +176,6 @@ public class MainTodoListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main_todo_list, container, false);
 
         mFab = view.findViewById(R.id.fab);
-//        mFab.setVisibility(View.VISIBLE);
         mFab.setOnClickListener(view1 -> {
             // TODO : 새작업 가기
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
@@ -212,13 +229,6 @@ public class MainTodoListFragment extends Fragment {
                 mAdapter.setSelect(model, position);
                 mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
 
-//                if (mAdapter.getSelectedList().size() >= 1) {
-//                    mFab.setVisibility(View.GONE);
-//                } else {
-//                    mFab.setVisibility(View.VISIBLE);
-//                }
-
-
                 return true;
             }
 
@@ -234,7 +244,6 @@ public class MainTodoListFragment extends Fragment {
                     // 선택한 아이템 갯수가 0이면 액션모드 나감
                     if (mAdapter.getSelectedList().size() == 0) {
                         mActionMode.finish();
-//                        mFab.setVisibility(View.VISIBLE);
                     }
 
                 } else {
@@ -295,13 +304,13 @@ public class MainTodoListFragment extends Fragment {
 
         // delete 용
         private List<Todo> getSelectedList() {
-            List<Todo> result = new ArrayList<>();
+            List<Todo> results = new ArrayList<>();
             for (Todo todo : mItems) {
                 if (mSelectedModelItem.contains(todo)) {
-                    result.add(todo);
+                    results.add(todo);
                 }
             }
-            return result;
+            return results;
         }
 
         @NonNull

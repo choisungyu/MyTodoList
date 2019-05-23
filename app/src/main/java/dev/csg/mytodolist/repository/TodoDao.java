@@ -31,4 +31,6 @@ public interface TodoDao {
     @Query("SELECT * FROM todo WHERE id = :id")
     Todo getTodoById(int id);
 
+    @Query("SELECT * FROM todo WHERE id IN (:userIds)")
+    List<Todo> loadAllByIds(List<Integer> userIds);
 }
