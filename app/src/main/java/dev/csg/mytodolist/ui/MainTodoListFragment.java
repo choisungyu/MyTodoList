@@ -63,6 +63,7 @@ public class MainTodoListFragment extends Fragment {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             mode.getMenuInflater().inflate(R.menu.menu_long_click, menu);
+            mFab.setVisibility(View.GONE);
             return true;
         }
 
@@ -97,6 +98,8 @@ public class MainTodoListFragment extends Fragment {
         public void onDestroyActionMode(ActionMode mode) {
             Toast.makeText(requireContext(), "종료", Toast.LENGTH_SHORT).show();
             mAdapter.mSelectedModelItem.clear();
+            // actionMode 꺼지면 보이고 켜지면 사라지게 하기
+            mFab.setVisibility(View.VISIBLE);
             mAdapter.notifyDataSetChanged();
             mActionMode = null;
         }
@@ -155,7 +158,7 @@ public class MainTodoListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main_todo_list, container, false);
 
         mFab = view.findViewById(R.id.fab);
-        mFab.setVisibility(View.VISIBLE);
+//        mFab.setVisibility(View.VISIBLE);
         mFab.setOnClickListener(view1 -> {
             // TODO : 새작업 가기
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
@@ -209,11 +212,11 @@ public class MainTodoListFragment extends Fragment {
                 mAdapter.setSelect(model, position);
                 mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
 
-                if (mAdapter.getSelectedList().size() >= 1) {
-                    mFab.setVisibility(View.GONE);
-                } else {
-                    mFab.setVisibility(View.VISIBLE);
-                }
+//                if (mAdapter.getSelectedList().size() >= 1) {
+//                    mFab.setVisibility(View.GONE);
+//                } else {
+//                    mFab.setVisibility(View.VISIBLE);
+//                }
 
 
                 return true;
@@ -231,7 +234,7 @@ public class MainTodoListFragment extends Fragment {
                     // 선택한 아이템 갯수가 0이면 액션모드 나감
                     if (mAdapter.getSelectedList().size() == 0) {
                         mActionMode.finish();
-                        mFab.setVisibility(View.VISIBLE);
+//                        mFab.setVisibility(View.VISIBLE);
                     }
 
                 } else {
