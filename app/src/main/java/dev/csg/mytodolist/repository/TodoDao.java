@@ -16,6 +16,9 @@ public interface TodoDao {
     @Query("SELECT * FROM todo ORDER BY 'id'")
     LiveData<List<Todo>> getAll();
 
+    @Query("SELECT * FROM todo")
+    Todo getTodo();
+
     @Insert
     void insertAll(Todo... todos);
 

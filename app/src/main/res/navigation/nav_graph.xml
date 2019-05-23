@@ -8,8 +8,8 @@
     <fragment
         android:id="@+id/mainTodoListFragment"
         android:name="dev.csg.mytodolist.ui.MainTodoListFragment"
-        android:label="fragment_main_todo_list"
-        tools:layout="@layout/fragment_main_todo_list" >
+        android:label="전체목록"
+        tools:layout="@layout/fragment_main_todo_list">
         <action
             android:id="@+id/action_mainTodoListFragment_to_newTaskFragment"
             app:destination="@id/newTaskFragment" />

@@ -1,12 +1,10 @@
 package dev.csg.mytodolist.ui;
 
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.ActionMode;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,7 +19,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -32,16 +28,16 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import dev.csg.mytodolist.MainViewModel;
 import dev.csg.mytodolist.R;
 import dev.csg.mytodolist.databinding.ItemTodoListBinding;
 import dev.csg.mytodolist.model.Todo;
 import dev.csg.mytodolist.repository.AppDatabase;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -54,8 +50,7 @@ public class MainTodoListFragment extends Fragment {
     private MainTodoListAdapter mAdapter;
 
     private ActionMode mActionMode;
-    private AdView mAdView;
-
+    private View mFab;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,29 +79,12 @@ public class MainTodoListFragment extends Fragment {
                     mode.finish();
                     return true;
                 case R.id.share:
-//                    shareNote();
-                    mode.finish();
+
+                    shareNote();
                     return true;
                 case R.id.delete:
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-                    builder.setTitle("확실한가요?");
-                    builder.setMessage("작업을 삭제 하시겠습니까?");
-                    builder.setCancelable(false);
-                    builder.setPositiveButton("예", (dialog, id) -> {
-                        // User clicked OK button
-                        AppDatabase.getInstance(requireActivity()).todoDao().deleteAll(
-                                mAdapter.getSelectedList()
-                        );
-                        mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
-                        mode.finish();
-                    });
-                    builder.setNegativeButton("아니오", (dialog, id) -> {
-                        // User cancelled the dialog
-                        dialog.cancel();
-                    });
-                    AlertDialog dialog = builder.create();    // 알림창 객체 생성
-                    dialog.show();
+                    alertDialogNote(mode);
                     return true;
 
                 default:
@@ -124,6 +102,47 @@ public class MainTodoListFragment extends Fragment {
         }
     };
 
+    private void alertDialogNote(ActionMode mode) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("확실한가요?");
+        builder.setMessage("작업을 삭제 하시겠습니까?");
+        builder.setCancelable(false);
+        builder.setPositiveButton("예", (dialog, id) -> {
+            // User clicked OK button
+            AppDatabase.getInstance(requireActivity()).todoDao().deleteAll(
+                    mAdapter.getSelectedList()
+            );
+            mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
+            mode.finish();
+        });
+        builder.setNegativeButton("아니오", (dialog, id) -> {
+            // User cancelled the dialog
+            dialog.cancel();
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void shareNote() {
+//        Bundle bundle = getArguments();
+//        if (bundle != null) {
+//
+//            bundleInt = bundle.getInt("id");
+        Todo todo = AppDatabase.getInstance(requireContext()).todoDao().getTodo();
+        int id = todo.getId();
+
+        Todo mTodo = AppDatabase.getInstance(requireContext()).todoDao().getTodoById(id);
+        Toast.makeText(requireContext(), "" + mTodo.getTitle(), Toast.LENGTH_SHORT).show();
+
+
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "할 일 : ");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, mTodo.getTitle());
+        startActivity(Intent.createChooser(sharingIntent, "공 유"));
+    }
+
 
     public MainTodoListFragment() {
         // Required empty public constructor
@@ -135,7 +154,9 @@ public class MainTodoListFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main_todo_list, container, false);
 
-        view.findViewById(R.id.fab).setOnClickListener(view1 -> {
+        mFab = view.findViewById(R.id.fab);
+        mFab.setVisibility(View.VISIBLE);
+        mFab.setOnClickListener(view1 -> {
             // TODO : 새작업 가기
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
             navController.navigate(R.id.action_mainTodoListFragment_to_newTaskFragment);
@@ -164,7 +185,7 @@ public class MainTodoListFragment extends Fragment {
 
         MobileAds.initialize(requireContext(), "ca-app-pub-8544040742728303~7451111542");
 
-        mAdView = view.findViewById(R.id.ad_View);
+        AdView mAdView = view.findViewById(R.id.ad_View);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
 
@@ -188,6 +209,12 @@ public class MainTodoListFragment extends Fragment {
                 mAdapter.setSelect(model, position);
                 mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
 
+                if (mAdapter.getSelectedList().size() >= 1) {
+                    mFab.setVisibility(View.GONE);
+                } else {
+                    mFab.setVisibility(View.VISIBLE);
+                }
+
 
                 return true;
             }
@@ -204,6 +231,7 @@ public class MainTodoListFragment extends Fragment {
                     // 선택한 아이템 갯수가 0이면 액션모드 나감
                     if (mAdapter.getSelectedList().size() == 0) {
                         mActionMode.finish();
+                        mFab.setVisibility(View.VISIBLE);
                     }
 
                 } else {
@@ -243,6 +271,7 @@ public class MainTodoListFragment extends Fragment {
         private MainTodoListAdapter(OnItemClickedListener listener) {
             mListener = listener;
         }
+
 
         // todo의 item_list 들을 꽂아주는 setter
         private void setItems(List<Todo> items) {
@@ -309,10 +338,10 @@ public class MainTodoListFragment extends Fragment {
             return mItems.size();
         }
 
-        public static class MainViewHolder extends RecyclerView.ViewHolder {
+        private static class MainViewHolder extends RecyclerView.ViewHolder {
             ItemTodoListBinding binding;
 
-            public MainViewHolder(@NonNull View itemView) {
+            private MainViewHolder(@NonNull View itemView) {
                 super(itemView);
                 binding = DataBindingUtil.bind(itemView);
             }
