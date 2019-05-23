@@ -8,5 +8,5 @@
         android:title="@string/action_settings"
         android:icon="@drawable/ic_search_white"
         app:actionViewClass="android.widget.SearchView"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom|collapseActionView" />
 </menu>

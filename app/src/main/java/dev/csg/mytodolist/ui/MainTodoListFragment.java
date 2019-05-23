@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -21,6 +23,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -31,6 +34,9 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -137,7 +143,7 @@ public class MainTodoListFragment extends Fragment {
 
             sb.append("- ").append(title).append("\n");
         }
-        return sb.substring(1, sb.length() -1);
+        return sb.substring(1, sb.length() - 1);
     }
 
 
@@ -154,6 +160,8 @@ public class MainTodoListFragment extends Fragment {
 
     public MainTodoListFragment() {
         // Required empty public constructor
+        setHasOptionsMenu(true);
+
     }
 
     @Override
@@ -161,9 +169,23 @@ public class MainTodoListFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_main, menu);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setMaxWidth(Integer.MAX_VALUE);
 
-        searchView.setQueryHint("탐색");
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                mAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
+
+//        searchView.setQueryHint("탐색");
     }
 
     @Override
@@ -270,12 +292,18 @@ public class MainTodoListFragment extends Fragment {
         recyclerView.setAdapter(mAdapter);
 
         // 추가되던 지우던 값 갱신되서 알아서 꽂아주기만 하는 곳
-        mainTodoViewModel.getItems().observe(requireActivity(), todos -> mAdapter.setItems(todos));
+        mainTodoViewModel.getItems().observe(requireActivity(), new Observer<List<Todo>>() {
+            @Override
+            public void onChanged(List<Todo> todos) {
+                mAdapter.setItems(todos);
+            }
+        });
     }
 
-    private static class MainTodoListAdapter extends RecyclerView.Adapter<MainTodoListAdapter.MainViewHolder> {
+    private static class MainTodoListAdapter extends RecyclerView.Adapter<MainTodoListAdapter.MainViewHolder> implements Filterable {
 
         private List<Todo> mItems = new ArrayList<>();
+        private List<Todo> mItemsFull;
         private Set<Todo> mSelectedModelItem = new HashSet<>();
 
         interface OnItemClickedListener {
@@ -295,6 +323,8 @@ public class MainTodoListFragment extends Fragment {
         // todo의 item_list 들을 꽂아주는 setter
         private void setItems(List<Todo> items) {
             this.mItems = items;
+            mItemsFull = new ArrayList<>(mItems);
+//            mItemsFull.addAll(mItems);
             notifyDataSetChanged();
         }
 
@@ -356,6 +386,40 @@ public class MainTodoListFragment extends Fragment {
         public int getItemCount() {
             return mItems.size();
         }
+
+        @Override
+        public Filter getFilter() {
+            return searchViewFilter;
+        }
+
+        private Filter searchViewFilter = new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                List<Todo> filteredList = new ArrayList<>();
+                if (constraint == null || constraint.length() == 0) {
+                    filteredList.addAll(mItemsFull);
+                } else {
+                    String filterPattern = constraint.toString().toLowerCase().trim();
+
+                    for (Todo todo : mItemsFull) {
+                        if (todo.getTitle().toLowerCase().contains(filterPattern)) {
+                            filteredList.add(todo);
+                        }
+                    }
+                }
+
+                FilterResults results = new FilterResults();
+                results.values = filteredList;
+                return results;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                mItems.clear();
+                mItems.addAll((Collection<? extends Todo>) results.values);
+                notifyDataSetChanged();
+            }
+        };
 
         private static class MainViewHolder extends RecyclerView.ViewHolder {
             ItemTodoListBinding binding;
