@@ -13,7 +13,7 @@ import java.util.List;
 
 @Dao
 public interface TodoDao {
-    @Query("SELECT * FROM todo ORDER BY 'id'")
+    @Query("SELECT * FROM todo ORDER BY id DESC")
     LiveData<List<Todo>> getAll();
 
     @Query("SELECT * FROM todo")
