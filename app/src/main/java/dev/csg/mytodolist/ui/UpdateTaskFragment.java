@@ -3,6 +3,9 @@ package dev.csg.mytodolist.ui;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -14,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import dev.csg.mytodolist.R;
 import dev.csg.mytodolist.model.Todo;
@@ -25,6 +29,7 @@ import dev.csg.mytodolist.repository.AppDatabase;
 public class UpdateTaskFragment extends Fragment {
     private Todo mTodo;
     private EditText mEditText;
+    private ImageView mImageView;
 
     public UpdateTaskFragment() {
         setHasOptionsMenu(true);
@@ -38,6 +43,8 @@ public class UpdateTaskFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_update_task, container, false);
         // 수정해야 하는 editText
         mEditText = view.findViewById(R.id.edit_text);
+        mImageView = view.findViewById(R.id.btn_date_picker_dialog);
+
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -52,6 +59,15 @@ public class UpdateTaskFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mImageView.setOnClickListener(v -> {
+            DialogFragment newFragment = new DatePickerFragment();
+            newFragment.show(requireActivity().getSupportFragmentManager(), "datePicker");
+        });
+        super.onViewCreated(view, savedInstanceState);
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

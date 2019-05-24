@@ -3,6 +3,9 @@ package dev.csg.mytodolist.model;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.util.Collections;
+import java.util.Comparator;
+
 @Entity
 public class Todo {
 

@@ -26,6 +26,7 @@
             android:layout_gravity="bottom|end"
             android:layout_marginEnd="@dimen/marginRight"
             android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/colorPrimaryDark"
             app:srcCompat="@drawable/ic_add_white_24dp" />
     </FrameLayout>
 

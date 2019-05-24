@@ -34,6 +34,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -292,12 +293,7 @@ public class MainTodoListFragment extends Fragment {
         recyclerView.setAdapter(mAdapter);
 
         // 추가되던 지우던 값 갱신되서 알아서 꽂아주기만 하는 곳
-        mainTodoViewModel.getItems().observe(requireActivity(), new Observer<List<Todo>>() {
-            @Override
-            public void onChanged(List<Todo> todos) {
-                mAdapter.setItems(todos);
-            }
-        });
+        mainTodoViewModel.getItems().observe(requireActivity(), todos -> mAdapter.setItems(todos));
     }
 
     private static class MainTodoListAdapter extends RecyclerView.Adapter<MainTodoListAdapter.MainViewHolder> implements Filterable {
@@ -324,13 +320,11 @@ public class MainTodoListFragment extends Fragment {
         private void setItems(List<Todo> items) {
             this.mItems = items;
             mItemsFull = new ArrayList<>(mItems);
-//            mItemsFull.addAll(mItems);
             notifyDataSetChanged();
         }
 
-        // todo의 selected(set) 된 model 들만 remove 하거나 add 해주는 setter
+        // 선택하기
         private void setSelect(Todo model, int position) {
-            // model 이 들어있는가
             if (mSelectedModelItem.contains(model)) {
                 mSelectedModelItem.remove(model);
             } else {
@@ -339,7 +333,7 @@ public class MainTodoListFragment extends Fragment {
             notifyItemChanged(position);
         }
 
-        // delete 용
+        // 선택된 애들
         private List<Todo> getSelectedList() {
             List<Todo> results = new ArrayList<>();
             for (Todo todo : mItems) {

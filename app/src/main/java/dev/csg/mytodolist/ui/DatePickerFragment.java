@@ -17,7 +17,7 @@ import java.util.Calendar;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+public class DatePickerFragment extends DialogFragment {
 
     @NonNull
     @Override
@@ -29,17 +29,19 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         int day = c.get(Calendar.DAY_OF_MONTH);
 
         // Create a new instance of DatePickerDialog and return it
-        return new DatePickerDialog(requireContext(), this, year, month, day);
+        return new DatePickerDialog(requireActivity(), (DatePickerDialog.OnDateSetListener) requireContext(), year, month, day);
     }
 
-    @Override
-    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        String dateSelected = (month + 1) +
-                " /" + dayOfMonth + " /" + year;
-        Toast.makeText(requireContext(),
-                "Selected Date is =" + dateSelected, Toast.LENGTH_SHORT).show();
+//    @Override
+//    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+//
+////        StringBuilder sb = new StringBuilder();
+////        sb.append(year).append(".").append(month + 1).append(".").append(dayOfMonth).append(".");
+////
+////        Toast.makeText(requireContext(),
+////                "Selected Date is = " + sb.toString(), Toast.LENGTH_SHORT).show();
+//
+//    }
 
 
-
-    }
 }

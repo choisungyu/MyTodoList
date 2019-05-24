@@ -14,7 +14,7 @@
         android:text="해야할 일?" />
 
     <EditText
-        android:id="@+id/edit_text"
+        android:id="@+id/edit_text_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="여기에 직접 입력" />
@@ -30,6 +30,7 @@
         android:orientation="horizontal">
 
         <EditText
+            android:id="@+id/edit_text_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

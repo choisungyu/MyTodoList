@@ -28,7 +28,7 @@ public interface TodoDao {
     @Update
     void update(Todo todo);
 
-    @Query("SELECT * FROM todo WHERE id = :id")
+    @Query("SELECT * FROM todo WHERE id = :id ")
     Todo getTodoById(int id);
 
     @Query("SELECT * FROM todo WHERE id IN (:userIds)")
