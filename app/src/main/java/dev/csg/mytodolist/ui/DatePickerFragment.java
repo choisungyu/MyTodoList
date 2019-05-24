@@ -34,12 +34,12 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        String dateSelected = (month + 1) +
-                " /" + dayOfMonth + " /" + year;
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(year).append(".").append(month + 1).append(".").append(dayOfMonth).append(".");
+
         Toast.makeText(requireContext(),
-                "Selected Date is =" + dateSelected, Toast.LENGTH_SHORT).show();
-
-
+                "Selected Date is = " + sb.toString(), Toast.LENGTH_SHORT).show();
 
     }
 }
