@@ -1,6 +1,7 @@
 package dev.csg.mytodolist.ui;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -16,7 +17,6 @@ import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,8 +35,6 @@ import com.google.android.gms.ads.MobileAds;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -104,7 +102,6 @@ public class MainTodoListFragment extends Fragment {
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            Toast.makeText(requireContext(), "종료", Toast.LENGTH_SHORT).show();
             mAdapter.mSelectedModelItem.clear();
             // actionMode 꺼지면 보이고 켜지면 사라지게 하기
             mFab.setVisibility(View.VISIBLE);
@@ -118,13 +115,16 @@ public class MainTodoListFragment extends Fragment {
         builder.setTitle("확실한가요?");
         builder.setMessage("작업을 삭제 하시겠습니까?");
         builder.setCancelable(false);
-        builder.setPositiveButton("예", (dialog, id) -> {
-            // User clicked OK button
-            AppDatabase.getInstance(requireActivity()).todoDao().deleteAll(
-                    mAdapter.getSelectedList()
-            );
-            mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
-            mode.finish();
+        builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+                AppDatabase.getInstance(MainTodoListFragment.this.requireActivity()).todoDao().deleteAll(
+                        mAdapter.getSelectedList()
+                );
+                mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
+                mode.finish();
+            }
         });
         builder.setNegativeButton("아니오", (dialog, id) -> {
             // User cancelled the dialog
@@ -169,7 +169,7 @@ public class MainTodoListFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_main, menu);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setQueryHint("Custom Search Hint");
+        searchView.setQueryHint("탐색");
         searchView.setIconified(false);
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
