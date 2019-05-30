@@ -18,6 +18,10 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import dev.csg.mytodolist.R;
 import dev.csg.mytodolist.model.Todo;
 import dev.csg.mytodolist.repository.AppDatabase;
@@ -28,7 +32,8 @@ import dev.csg.mytodolist.repository.AppDatabase;
  */
 public class NewTaskFragment extends Fragment {
 
-    private EditText editText;
+    private EditText mTitleEditText;
+    private EditText mDateEditText;
     private ImageView imageView;
     private String mTitle;
 
@@ -44,7 +49,8 @@ public class NewTaskFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_new_task, container, false);
 
         // 새로 입력 받은 값
-        editText = view.findViewById(R.id.edit_text);
+        mTitleEditText = view.findViewById(R.id.edit_text);
+        mDateEditText = view.findViewById(R.id.date_edit_text);
         imageView = view.findViewById(R.id.btn_date_picker_dialog);
 
 
@@ -54,7 +60,15 @@ public class NewTaskFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         imageView.setOnClickListener(v -> {
-            DialogFragment newFragment = new DatePickerFragment();
+            DialogFragment newFragment = new DatePickerFragment((view1, year, month, dayOfMonth) -> {
+                Calendar cal = Calendar.getInstance();
+                Date chosenDate = cal.getTime();
+
+                DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL);
+                String df = dateFormat.format(chosenDate);
+                // Display the formatted date
+                mDateEditText.setText(df);
+            });
             newFragment.show(requireActivity().getSupportFragmentManager(), "datePicker");
         });
         super.onViewCreated(view, savedInstanceState);
@@ -73,11 +87,11 @@ public class NewTaskFragment extends Fragment {
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
 
                 // newTask 에서도 삽입 있어야 함
-                String mTitle = editText.getText().toString();
+                String mTitle = mTitleEditText.getText().toString();
                 AppDatabase.getInstance(requireActivity()).todoDao().insertAll(
                         new Todo(mTitle)
                 );
-                editText.setText("");
+                mTitleEditText.setText("");
 
                 navController.popBackStack();
                 return true;
