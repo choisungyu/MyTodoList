@@ -62,6 +62,7 @@ public class NewTaskFragment extends Fragment {
         imageView.setOnClickListener(v -> {
             DialogFragment newFragment = new DatePickerFragment((view1, year, month, dayOfMonth) -> {
                 Calendar cal = Calendar.getInstance();
+                cal.set(year, month, dayOfMonth, 0, 0);
                 Date chosenDate = cal.getTime();
 
                 DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL);
