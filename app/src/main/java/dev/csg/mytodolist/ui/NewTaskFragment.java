@@ -36,6 +36,7 @@ public class NewTaskFragment extends Fragment {
     private EditText mDateEditText;
     private ImageView imageView;
     private String mTitle;
+    private String mDate;
 
     public NewTaskFragment() {
         // Required empty public constructor
@@ -66,9 +67,9 @@ public class NewTaskFragment extends Fragment {
                 Date chosenDate = cal.getTime();
 
                 DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL);
-                String df = dateFormat.format(chosenDate);
+                mDate = dateFormat.format(chosenDate);
                 // Display the formatted date
-                mDateEditText.setText(df);
+                mDateEditText.setText(mDate);
             });
             newFragment.show(requireActivity().getSupportFragmentManager(), "datePicker");
         });
@@ -90,7 +91,7 @@ public class NewTaskFragment extends Fragment {
                 // newTask 에서도 삽입 있어야 함
                 String mTitle = mTitleEditText.getText().toString();
                 AppDatabase.getInstance(requireActivity()).todoDao().insertAll(
-                        new Todo(mTitle)
+                        new Todo(mTitle,mDate)
                 );
                 mTitleEditText.setText("");
 

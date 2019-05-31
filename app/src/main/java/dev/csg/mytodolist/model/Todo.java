@@ -10,12 +10,26 @@ public class Todo {
     private int id;
 
     private String title;
+    private String date;
 
     public Todo() {
     }
 
+    public Todo(String title, String date) {
+        this.title = title;
+        this.date = date;
+    }
+
     public Todo(String title) {
         this.title = title;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public Todo(int id) {
