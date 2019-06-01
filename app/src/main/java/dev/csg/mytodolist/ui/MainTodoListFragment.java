@@ -196,6 +196,9 @@ public class MainTodoListFragment extends Fragment {
                 return true;
             case R.id.action_done_list:
                 // todo : done_list_fragment 로 가는거
+
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+                navController.navigate(R.id.action_mainTodoListFragment_to_doneListFragment);
         }
         return super.onOptionsItemSelected(item);
 
