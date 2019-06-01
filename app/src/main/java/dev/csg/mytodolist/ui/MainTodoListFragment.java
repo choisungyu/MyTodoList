@@ -193,6 +193,9 @@ public class MainTodoListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.check:
+                return true;
+            case R.id.action_done_list:
+                // todo : done_list_fragment 로 가는거
         }
         return super.onOptionsItemSelected(item);
 

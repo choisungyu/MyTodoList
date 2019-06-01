@@ -11,7 +11,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="해야할 일?" />
+        android:text="해야할 일?"
+        android:fontFamily="@font/acme"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <EditText
         android:id="@+id/edit_text"
@@ -22,7 +24,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="만기일" />
+        android:fontFamily="@font/acme"
+        android:text="만기일"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <LinearLayout
         android:layout_width="match_parent"

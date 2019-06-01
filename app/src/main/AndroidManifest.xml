@@ -15,6 +15,10 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-8544040742728303~7451111542"/>
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
         <activity
             android:name="dev.csg.mytodolist.MainActivity"
             android:label="@string/app_name"
