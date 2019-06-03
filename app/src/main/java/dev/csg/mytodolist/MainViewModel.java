@@ -25,5 +25,14 @@ public class MainViewModel extends AndroidViewModel {
         return mDb.todoDao().getAll();
     }
 
+    public LiveData<List<Todo>> getDoneTaskItems() {
+
+        return mDb.todoDao().getDoneTask();
+    }
+
+    public LiveData<List<Todo>> getMainTaskItems() {
+        return mDb.todoDao().getMainTask();
+    }
+
 
 }

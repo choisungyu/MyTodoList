@@ -11,6 +11,15 @@ public class Todo {
 
     private String title;
     private String date;
+    private Boolean isDone = false;
+
+    public Boolean getDone() {
+        return isDone;
+    }
+
+    public void setDone(Boolean done) {
+        isDone = done;
+    }
 
     public Todo() {
     }

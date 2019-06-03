@@ -13,10 +13,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -298,13 +300,15 @@ public class MainTodoListFragment extends Fragment {
 
         recyclerView.setAdapter(mAdapter);
 
-        // 추가되던 지우던 값 갱신되서 알아서 꽂아주기만 하는 곳
-        mainTodoViewModel.getItems().observe(requireActivity(), new Observer<List<Todo>>() {
+        // unchecked (boolean = 0) observing
+        mainTodoViewModel.getMainTaskItems().observe(requireActivity(), new Observer<List<Todo>>() {
             @Override
             public void onChanged(List<Todo> todos) {
                 mAdapter.setItems(todos);
             }
         });
+
+
     }
 
     private static class MainTodoListAdapter extends RecyclerView.Adapter<MainTodoListAdapter.MainViewHolder> implements Filterable {
@@ -373,6 +377,27 @@ public class MainTodoListFragment extends Fragment {
                 final Todo item = mItems.get(viewHolder.getAdapterPosition());
                 return mListener.onLongClicked(v, viewHolder.getAdapterPosition(), item);
             });
+
+            CheckBox checkBox = view.findViewById(R.id.checkBox);
+            checkBox.setOnClickListener(v -> {
+                final Todo item = mItems.get(viewHolder.getAdapterPosition());
+//                item.setDone(checkBox.isChecked());
+                // 체크 된 애로 보는거(boolean = 0) => 바뀐것을 누구에게 알려줘야 함
+                // item 에서 isDone 을 1로 만듦
+
+                item.setDone(checkBox.isChecked());
+                Toast.makeText(view.getContext(), "" + AppDatabase.getInstance(view.getContext()).todoDao().getDoneTask().getValue(), Toast.LENGTH_SHORT).show();
+
+                AppDatabase.getInstance(view.getContext()).todoDao().getDoneTask(
+
+                ); // null
+
+
+                // 체크된 애들 db 에 저장
+
+//                checkBox.setChecked(false);
+            });
+
             return viewHolder;
         }
 

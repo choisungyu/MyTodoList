@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import dev.csg.mytodolist.MainViewModel;
 import dev.csg.mytodolist.R;
 import dev.csg.mytodolist.databinding.ItemTodoListBinding;
 import dev.csg.mytodolist.model.Todo;
@@ -81,8 +84,20 @@ public class DoneListFragment extends Fragment {
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
+
         mAdapter = new DoneListAdapter();
         recyclerView.setAdapter(mAdapter);
+
+        MainViewModel mainTodoViewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel.class);
+
+
+        // boolean 값이 1인 애들만 관찰해서 뿌려주는거
+        mainTodoViewModel.getDoneTaskItems().observe(requireActivity(), new Observer<List<Todo>>() {
+            @Override
+            public void onChanged(List<Todo> todos) {
+                mAdapter.setItems(todos);
+            }
+        });
     }
 
     private static class DoneListAdapter extends RecyclerView.Adapter<DoneListAdapter.DoneViewHolder> {
@@ -100,6 +115,7 @@ public class DoneListFragment extends Fragment {
         public DoneListAdapter() {
         }
 
+        // listener 사용할 때, 사용하기
         public DoneListAdapter(OnItemClickListener listener) {
             mListener = listener;
         }
