@@ -25,6 +25,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
@@ -311,11 +314,17 @@ public class MainTodoListFragment extends Fragment {
 
     }
 
-    private static class MainTodoListAdapter extends RecyclerView.Adapter<MainTodoListAdapter.MainViewHolder> implements Filterable {
+    private static class MainTodoListAdapter extends RecyclerView.Adapter<MainTodoListAdapter.MainViewHolder> implements Filterable, LifecycleOwner {
 
         private List<Todo> mItems = new ArrayList<>();
         private List<Todo> mItemsFull;
         private Set<Todo> mSelectedModelItem = new HashSet<>();
+
+        @NonNull
+        @Override
+        public Lifecycle getLifecycle() {
+            return null;
+        }
 
         interface OnItemClickedListener {
             boolean onLongClicked(View view, int position, Todo model);
@@ -388,9 +397,8 @@ public class MainTodoListFragment extends Fragment {
                 item.setDone(checkBox.isChecked());
                 Toast.makeText(view.getContext(), "" + AppDatabase.getInstance(view.getContext()).todoDao().getDoneTask().getValue(), Toast.LENGTH_SHORT).show();
 
-                AppDatabase.getInstance(view.getContext()).todoDao().getDoneTask(
-
-                ); // null
+                // query 가져와서 getInstance 해라
+                AppDatabase.getInstance(view.getContext()).todoDao().update(item);// null
 
 
                 // 체크된 애들 db 에 저장
@@ -406,6 +414,12 @@ public class MainTodoListFragment extends Fragment {
         public void onBindViewHolder(@NonNull MainViewHolder holder, int position) {
             Todo item = mItems.get(position);
             holder.binding.setTodo(item);
+
+            if (item.getDone()) {
+                holder.binding.checkBox.setChecked(true);
+            } else {
+                holder.binding.checkBox.setChecked(false);
+            }
 
             if (mSelectedModelItem.contains(item)) {
                 holder.itemView.setBackgroundColor(Color.CYAN);

@@ -39,7 +39,6 @@
                     android:id="@+id/text_view_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/acme"
                     android:text="@{todo.title}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textSize="16sp" />
@@ -49,7 +48,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     bind:date="@{todo.date}"
-                    android:fontFamily="@font/acme"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textColor="#E91E63"
                     android:textSize="14sp" />

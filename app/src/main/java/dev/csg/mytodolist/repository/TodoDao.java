@@ -34,10 +34,12 @@ public interface TodoDao {
     @Query("SELECT * FROM todo WHERE id IN (:userIds)")
     List<Todo> loadAllByIds(List<Integer> userIds);
 
-    @Query("SELECT * FROM todo WHERE isDone=0 ORDER BY id DESC") // unchecked
+    @Query("SELECT * FROM todo WHERE isDone = 0 ORDER BY id DESC")
+        // unchecked
     LiveData<List<Todo>> getMainTask();
 
-    @Query("SELECT * FROM todo WHERE isDone=1 ORDER BY id DESC") // checked
+    @Query("SELECT * FROM todo WHERE isDone = 1 ORDER BY id DESC")
+        // checked
     LiveData<List<Todo>> getDoneTask();
 
 }
