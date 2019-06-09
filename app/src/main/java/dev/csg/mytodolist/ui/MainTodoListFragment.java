@@ -59,8 +59,19 @@ public class MainTodoListFragment extends Fragment {
     private ActionMode mActionMode;
     private View mFab;
 
+    private interface ActionCallback extends ActionMode.Callback {
+        void setClickedView(View view);
+    }
 
-    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+    private ActionMode.Callback mActionModeCallback = new ActionCallback() {
+
+
+        public View mClickedView;
+
+        public void setClickedView(View view) {
+            mClickedView = view;
+        }
+
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             mode.getMenuInflater().inflate(R.menu.menu_long_click, menu);
@@ -80,6 +91,7 @@ public class MainTodoListFragment extends Fragment {
 
 //                    mode.finish();
                     alertTodoDoneDialogNote(mode);
+//                    mClickedView.getTag();
                     return true;
                 case R.id.share:
 
@@ -145,16 +157,15 @@ public class MainTodoListFragment extends Fragment {
 //                );
 //                mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
 //                Object checkedItem = lw.getAdapter().getItem(lw.getCheckedItemPosition());
+                List<Todo> selectedList = mAdapter.getSelectedList();
+                for (Todo todo : selectedList) {
+                    todo.setDone(true);
+                }
 
-//                final Todo item = (Todo) mAdapter.getSelectedList();
-                CheckBox checkBox = MainTodoListFragment.this.requireActivity().findViewById(R.id.checkBox);
-
-
-//                checkBox.setChecked();
 //                Toast.makeText(view.getContext(), "" + AppDatabase.getInstance(view.getContext()).todoDao().getDoneTask().getValue(), Toast.LENGTH_SHORT).show();
 
                 // query 가져와서 getInstance 해라
-//                AppDatabase.getInstance(MainTodoListFragment.this.requireActivity()).todoDao().update(item);// null
+                AppDatabase.getInstance(MainTodoListFragment.this.requireActivity()).todoDao().update(selectedList);// null
                 mode.finish();
             }
         });
