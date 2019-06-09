@@ -33,9 +33,9 @@ import dev.csg.mytodolist.repository.AppDatabase;
 public class NewTaskFragment extends Fragment {
 
     private EditText mTitleEditText;
-    private EditText mDateEditText;
     private ImageView imageView;
     private String mTitle;
+    private EditText mDateEditText;
     private String mDate;
 
     public NewTaskFragment() {

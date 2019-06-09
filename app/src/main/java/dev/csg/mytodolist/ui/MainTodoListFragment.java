@@ -89,9 +89,7 @@ public class MainTodoListFragment extends Fragment {
             switch (item.getItemId()) {
                 case R.id.check:
 
-//                    mode.finish();
                     alertTodoDoneDialogNote(mode);
-//                    mClickedView.getTag();
                     return true;
                 case R.id.share:
 
@@ -111,7 +109,6 @@ public class MainTodoListFragment extends Fragment {
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             mAdapter.mSelectedModelItem.clear();
-            // actionMode 꺼지면 보이고 켜지면 사라지게 하기
             mFab.setVisibility(View.VISIBLE);
             mAdapter.notifyDataSetChanged();
             mActionMode = null;
@@ -123,16 +120,13 @@ public class MainTodoListFragment extends Fragment {
         builder.setTitle("확실한가요?");
         builder.setMessage("작업을 삭제 하시겠습니까?");
         builder.setCancelable(false);
-        builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                // User clicked OK button
-                AppDatabase.getInstance(MainTodoListFragment.this.requireActivity()).todoDao().deleteAll(
-                        mAdapter.getSelectedList()
-                );
-                mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
-                mode.finish();
-            }
+        builder.setPositiveButton("예", (dialog, id) -> {
+            // User clicked OK button
+            AppDatabase.getInstance(MainTodoListFragment.this.requireActivity()).todoDao().deleteAll(
+                    mAdapter.getSelectedList()
+            );
+            mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
+            mode.finish();
         });
         builder.setNegativeButton("아니오", (dialog, id) -> {
             // User cancelled the dialog
@@ -148,26 +142,16 @@ public class MainTodoListFragment extends Fragment {
         builder.setTitle("확실한가요?");
         builder.setMessage("완료된 작업으로 설정하시겠습니까?");
         builder.setCancelable(false);
-        builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                // User clicked OK button
-//                AppDatabase.getInstance(MainTodoListFragment.this.requireActivity()).todoDao().deleteAll(
-//                        mAdapter.getSelectedList()
-//                );
-//                mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
-//                Object checkedItem = lw.getAdapter().getItem(lw.getCheckedItemPosition());
-                List<Todo> selectedList = mAdapter.getSelectedList();
-                for (Todo todo : selectedList) {
-                    todo.setDone(true);
-                }
+        builder.setPositiveButton("예", (dialog, id) -> {
 
-//                Toast.makeText(view.getContext(), "" + AppDatabase.getInstance(view.getContext()).todoDao().getDoneTask().getValue(), Toast.LENGTH_SHORT).show();
-
-                // query 가져와서 getInstance 해라
-                AppDatabase.getInstance(MainTodoListFragment.this.requireActivity()).todoDao().update(selectedList);// null
-                mode.finish();
+            List<Todo> selectedList = mAdapter.getSelectedList();
+            for (Todo todo : selectedList) {
+                todo.setDone(true);
             }
+
+            // query 가져와서 getInstance 해라
+            AppDatabase.getInstance(MainTodoListFragment.this.requireActivity()).todoDao().update(selectedList);// null
+            mode.finish();
         });
         builder.setNegativeButton("아니오", (dialog, id) -> {
             // User cancelled the dialog

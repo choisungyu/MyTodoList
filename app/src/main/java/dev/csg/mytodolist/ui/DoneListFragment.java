@@ -25,7 +25,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Adapter;
 import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.SearchView;
@@ -71,7 +70,7 @@ public class DoneListFragment extends Fragment {
             switch (item.getItemId()) {
                 case R.id.check:
 
-                    mode.finish();
+                    alertTodoDoneDialogNote(mode);
                     return true;
                 case R.id.share:
 
@@ -79,7 +78,7 @@ public class DoneListFragment extends Fragment {
                     return true;
                 case R.id.delete:
 
-                    alertDialogNote(mode);
+                    alertTodoDeleteDialogNote(mode);
                     return true;
 
                 default:
@@ -97,21 +96,41 @@ public class DoneListFragment extends Fragment {
         }
     };
 
-    private void alertDialogNote(ActionMode mode) {
+    private void alertTodoDeleteDialogNote(ActionMode mode) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("확실한가요?");
         builder.setMessage("작업을 삭제 하시겠습니까?");
         builder.setCancelable(false);
-        builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                // User clicked OK button
-                AppDatabase.getInstance(DoneListFragment.this.requireActivity()).todoDao().deleteAll(
-                        mAdapter.getSelectedList()
-                );
-                mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
-                mode.finish();
+        builder.setPositiveButton("예", (dialog, id) -> {
+            // User clicked OK button
+            AppDatabase.getInstance(DoneListFragment.this.requireActivity()).todoDao().deleteAll(
+                    mAdapter.getSelectedList()
+            );
+            mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
+            mode.finish();
+        });
+        builder.setNegativeButton("아니오", (dialog, id) -> {
+            // User cancelled the dialog
+            dialog.cancel();
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void alertTodoDoneDialogNote(ActionMode mode) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("확실한가요?");
+        builder.setMessage("완료된 작업으로 설정하시겠습니까?");
+        builder.setCancelable(false);
+        builder.setPositiveButton("예", (dialog, id) -> {
+
+            List<Todo> selectedList = mAdapter.getSelectedList();
+            for (Todo todo : selectedList) {
+                todo.setDone(false);
             }
+
+            AppDatabase.getInstance(DoneListFragment.this.requireActivity()).todoDao().update(selectedList);// null
+            mode.finish();
         });
         builder.setNegativeButton("아니오", (dialog, id) -> {
             // User cancelled the dialog

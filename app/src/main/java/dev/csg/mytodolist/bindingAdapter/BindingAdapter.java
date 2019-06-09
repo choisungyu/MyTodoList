@@ -13,4 +13,9 @@ public class BindingAdapter {
             textView.setText(date);
         }
     }
+
+//    @androidx.databinding.BindingAdapter("done")
+//    public static void isSelectedTaskDone(TextView textView) {
+//
+//    }
 }
