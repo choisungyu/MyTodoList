@@ -314,17 +314,11 @@ public class MainTodoListFragment extends Fragment {
 
     }
 
-    private static class MainTodoListAdapter extends RecyclerView.Adapter<MainTodoListAdapter.MainViewHolder> implements Filterable, LifecycleOwner {
+    private static class MainTodoListAdapter extends RecyclerView.Adapter<MainTodoListAdapter.MainViewHolder> implements Filterable {
 
         private List<Todo> mItems = new ArrayList<>();
         private List<Todo> mItemsFull;
         private Set<Todo> mSelectedModelItem = new HashSet<>();
-
-        @NonNull
-        @Override
-        public Lifecycle getLifecycle() {
-            return null;
-        }
 
         interface OnItemClickedListener {
             boolean onLongClicked(View view, int position, Todo model);
@@ -395,7 +389,7 @@ public class MainTodoListFragment extends Fragment {
                 // item 에서 isDone 을 1로 만듦
 
                 item.setDone(checkBox.isChecked());
-                Toast.makeText(view.getContext(), "" + AppDatabase.getInstance(view.getContext()).todoDao().getDoneTask().getValue(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(view.getContext(), "" + AppDatabase.getInstance(view.getContext()).todoDao().getDoneTask().getValue(), Toast.LENGTH_SHORT).show();
 
                 // query 가져와서 getInstance 해라
                 AppDatabase.getInstance(view.getContext()).todoDao().update(item);// null

@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Adapter;
+import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.SearchView;
 
@@ -32,6 +33,7 @@ import dev.csg.mytodolist.MainViewModel;
 import dev.csg.mytodolist.R;
 import dev.csg.mytodolist.databinding.ItemTodoListBinding;
 import dev.csg.mytodolist.model.Todo;
+import dev.csg.mytodolist.repository.AppDatabase;
 
 public class DoneListFragment extends Fragment {
 
@@ -69,8 +71,6 @@ public class DoneListFragment extends Fragment {
 //        searchView.setQueryHint("탐색");
     }
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -91,7 +91,7 @@ public class DoneListFragment extends Fragment {
         MainViewModel mainTodoViewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel.class);
 
 
-        // boolean 값이 1인 애들만 관찰해서 뿌려주는거
+        // unchecked (boolean = 1) observing
         mainTodoViewModel.getDoneTaskItems().observe(requireActivity(), new Observer<List<Todo>>() {
             @Override
             public void onChanged(List<Todo> todos) {
@@ -140,6 +140,27 @@ public class DoneListFragment extends Fragment {
                     }
                 }
             });
+
+            // doneListFragment 에서도 똑같이 눌렀을 때 상태 변화 체크
+            CheckBox checkBox = view.findViewById(R.id.checkBox);
+            checkBox.setOnClickListener(v -> {
+                final Todo item = mItems.get(viewHolder.getAdapterPosition());
+//                item.setDone(checkBox.isChecked());
+                // 체크 된 애로 보는거(boolean = 0) => 바뀐것을 누구에게 알려줘야 함
+                // item 에서 isDone 을 1로 만듦
+
+                item.setDone(checkBox.isChecked());
+//                Toast.makeText(view.getContext(), "" + AppDatabase.getInstance(view.getContext()).todoDao().getDoneTask().getValue(), Toast.LENGTH_SHORT).show();
+
+                // query 가져와서 getInstance 해라
+                AppDatabase.getInstance(view.getContext()).todoDao().update(item);// null
+
+
+                // 체크된 애들 db 에 저장
+
+//                checkBox.setChecked(false);
+            });
+
             return viewHolder;
         }
 
@@ -148,6 +169,12 @@ public class DoneListFragment extends Fragment {
             Todo item = mItems.get(position);
             // TODO : 데이터를 뷰홀더에 표시하시오
             holder.binding.setTodo(item);
+
+            if (item.getDone()) {
+                holder.binding.checkBox.setChecked(true);
+            } else {
+                holder.binding.checkBox.setChecked(false);
+            }
         }
 
         @Override
