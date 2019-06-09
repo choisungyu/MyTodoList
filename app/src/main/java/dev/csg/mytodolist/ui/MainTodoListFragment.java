@@ -78,7 +78,8 @@ public class MainTodoListFragment extends Fragment {
             switch (item.getItemId()) {
                 case R.id.check:
 
-                    mode.finish();
+//                    mode.finish();
+                    alertTodoDoneDialogNote(mode);
                     return true;
                 case R.id.share:
 
@@ -86,7 +87,7 @@ public class MainTodoListFragment extends Fragment {
                     return true;
                 case R.id.delete:
 
-                    alertDialogNote(mode);
+                    alertTodoDeleteDialogNote(mode);
                     return true;
 
                 default:
@@ -105,7 +106,7 @@ public class MainTodoListFragment extends Fragment {
         }
     };
 
-    private void alertDialogNote(ActionMode mode) {
+    private void alertTodoDeleteDialogNote(ActionMode mode) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("확실한가요?");
         builder.setMessage("작업을 삭제 하시겠습니까?");
@@ -118,6 +119,42 @@ public class MainTodoListFragment extends Fragment {
                         mAdapter.getSelectedList()
                 );
                 mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
+                mode.finish();
+            }
+        });
+        builder.setNegativeButton("아니오", (dialog, id) -> {
+            // User cancelled the dialog
+            dialog.cancel();
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
+    private void alertTodoDoneDialogNote(ActionMode mode) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("확실한가요?");
+        builder.setMessage("완료된 작업으로 설정하시겠습니까?");
+        builder.setCancelable(false);
+        builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+//                AppDatabase.getInstance(MainTodoListFragment.this.requireActivity()).todoDao().deleteAll(
+//                        mAdapter.getSelectedList()
+//                );
+//                mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
+//                Object checkedItem = lw.getAdapter().getItem(lw.getCheckedItemPosition());
+
+//                final Todo item = (Todo) mAdapter.getSelectedList();
+                CheckBox checkBox = MainTodoListFragment.this.requireActivity().findViewById(R.id.checkBox);
+
+
+//                checkBox.setChecked();
+//                Toast.makeText(view.getContext(), "" + AppDatabase.getInstance(view.getContext()).todoDao().getDoneTask().getValue(), Toast.LENGTH_SHORT).show();
+
+                // query 가져와서 getInstance 해라
+//                AppDatabase.getInstance(MainTodoListFragment.this.requireActivity()).todoDao().update(item);// null
                 mode.finish();
             }
         });
