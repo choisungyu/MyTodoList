@@ -34,5 +34,9 @@
         android:id="@+id/doneListFragment"
         android:name="dev.csg.mytodolist.ui.DoneListFragment"
         android:label="완료 목록"
-        tools:layout="@layout/fragment_done_list" />
+        tools:layout="@layout/fragment_done_list" >
+        <action
+            android:id="@+id/action_doneListFragment_to_updateTaskFragment"
+            app:destination="@id/updateTaskFragment" />
+    </fragment>
 </navigation>

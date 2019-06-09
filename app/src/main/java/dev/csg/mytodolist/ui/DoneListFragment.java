@@ -1,10 +1,14 @@
 package dev.csg.mytodolist.ui;
 
 
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -13,6 +17,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,7 +32,9 @@ import android.widget.SearchView;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import dev.csg.mytodolist.MainViewModel;
 import dev.csg.mytodolist.R;
@@ -39,11 +46,101 @@ public class DoneListFragment extends Fragment {
 
 
     private DoneListAdapter mAdapter;
+    private ActionMode mActionMode;
+
 
     public DoneListFragment() {
         // Required empty public constructor
         setHasOptionsMenu(true);
+    }
 
+    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate(R.menu.menu_long_click, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.check:
+
+                    mode.finish();
+                    return true;
+                case R.id.share:
+
+                    shareNote();
+                    return true;
+                case R.id.delete:
+
+                    alertDialogNote(mode);
+                    return true;
+
+                default:
+                    return false;
+
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mAdapter.mSelectedModelItem.clear();
+            // actionMode 꺼지면 보이고 켜지면 사라지게 하기
+            mAdapter.notifyDataSetChanged();
+            mActionMode = null;
+        }
+    };
+
+    private void alertDialogNote(ActionMode mode) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("확실한가요?");
+        builder.setMessage("작업을 삭제 하시겠습니까?");
+        builder.setCancelable(false);
+        builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+                AppDatabase.getInstance(DoneListFragment.this.requireActivity()).todoDao().deleteAll(
+                        mAdapter.getSelectedList()
+                );
+                mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
+                mode.finish();
+            }
+        });
+        builder.setNegativeButton("아니오", (dialog, id) -> {
+            // User cancelled the dialog
+            dialog.cancel();
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
+    private String getByIdTitle() {
+
+        StringBuilder sb = new StringBuilder();
+        for (Todo todo : mAdapter.getSelectedList()) {
+            String title = todo.getTitle();
+
+            sb.append("- ").append(title).append("\n");
+        }
+        return sb.substring(1, sb.length() - 1);
+    }
+
+    private void shareNote() {
+
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "할 일 : \n");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, getByIdTitle());
+        startActivity(Intent.createChooser(sharingIntent, "공 유"));
     }
 
     @Override
@@ -85,7 +182,46 @@ public class DoneListFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
 
-        mAdapter = new DoneListAdapter();
+        mAdapter = new DoneListAdapter(new DoneListAdapter.OnItemClickListener() {
+
+            @Override
+            public boolean onLongClicked(View view, int position, Todo model) {
+
+                mActionMode = view.startActionMode(mActionModeCallback);
+                // 현재 아이템 선택, 타이틀 변경
+                mAdapter.setSelect(model, position);
+                mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
+                return true;
+            }
+
+            @Override
+            public void onClicked(int position, Todo model) {
+                if (mActionMode != null) {
+                    // 액션모드 진입 == LongClicked
+
+                    // 현재 아이템 선택, 타이틀 변경
+                    mAdapter.setSelect(model, position);
+                    mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
+
+                    // 선택한 아이템 갯수가 0이면 액션모드 나감
+                    if (mAdapter.getSelectedList().size() == 0) {
+                        mActionMode.setTitle("");
+                        mActionMode.finish();
+                    }
+
+                } else {
+                    // 액션모드 진입 전
+
+                    // 번들로 담아서 보내줘야 함.
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("id", model.getId());
+
+                    NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+                    navController.navigate(R.id.action_doneListFragment_to_updateTaskFragment, bundle);
+
+                }
+            }
+        });
         recyclerView.setAdapter(mAdapter);
 
         MainViewModel mainTodoViewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel.class);
@@ -96,6 +232,7 @@ public class DoneListFragment extends Fragment {
             @Override
             public void onChanged(List<Todo> todos) {
                 mAdapter.setItems(todos);
+
             }
         });
     }
@@ -104,26 +241,50 @@ public class DoneListFragment extends Fragment {
 
         private List<Todo> mItems = new ArrayList<>();
         private List<Todo> mItemsFull;
+        private Set<Todo> mSelectedModelItem = new HashSet<>();
+
 
         interface OnItemClickListener {
-            void onClicked(Todo model);
+            boolean onLongClicked(View view, int position, Todo model);
+
+            void onClicked(int position, Todo model);
+
         }
 
         private OnItemClickListener mListener;
 
-
-        public DoneListAdapter() {
-        }
-
         // listener 사용할 때, 사용하기
-        public DoneListAdapter(OnItemClickListener listener) {
+        private DoneListAdapter(OnItemClickListener listener) {
             mListener = listener;
         }
 
-        public void setItems(List<Todo> items) {
+        private void setItems(List<Todo> items) {
             this.mItems = items;
+            mItemsFull = new ArrayList<>(mItems);
             notifyDataSetChanged();
         }
+
+        private void setSelect(Todo model, int position) {
+            // model 이 들어있는가
+            if (mSelectedModelItem.contains(model)) {
+                mSelectedModelItem.remove(model);
+            } else {
+                mSelectedModelItem.add(model);
+            }
+            notifyItemChanged(position);
+        }
+
+        // delete 용
+        private List<Todo> getSelectedList() {
+            List<Todo> results = new ArrayList<>();
+            for (Todo todo : mItems) {
+                if (mSelectedModelItem.contains(todo)) {
+                    results.add(todo);
+                }
+            }
+            return results;
+        }
+
 
         @NonNull
         @Override
@@ -131,13 +292,17 @@ public class DoneListFragment extends Fragment {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_todo_list, parent, false);
             final DoneViewHolder viewHolder = new DoneViewHolder(view);
-            view.setOnClickListener(new View.OnClickListener() {
+
+            view.setOnClickListener(v -> {
+                final Todo item = mItems.get(viewHolder.getAdapterPosition());
+                mListener.onClicked(viewHolder.getAdapterPosition(), item);
+            });
+
+            view.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public void onClick(View v) {
-                    if (mListener != null) {
-                        final Todo item = mItems.get(viewHolder.getAdapterPosition());
-                        mListener.onClicked(item);
-                    }
+                public boolean onLongClick(View v) {
+                    final Todo item = mItems.get(viewHolder.getAdapterPosition());
+                    return mListener.onLongClicked(v, viewHolder.getAdapterPosition(), item);
                 }
             });
 
@@ -150,15 +315,10 @@ public class DoneListFragment extends Fragment {
                 // item 에서 isDone 을 1로 만듦
 
                 item.setDone(checkBox.isChecked());
-//                Toast.makeText(view.getContext(), "" + AppDatabase.getInstance(view.getContext()).todoDao().getDoneTask().getValue(), Toast.LENGTH_SHORT).show();
 
                 // query 가져와서 getInstance 해라
                 AppDatabase.getInstance(view.getContext()).todoDao().update(item);// null
 
-
-                // 체크된 애들 db 에 저장
-
-//                checkBox.setChecked(false);
             });
 
             return viewHolder;
@@ -174,6 +334,12 @@ public class DoneListFragment extends Fragment {
                 holder.binding.checkBox.setChecked(true);
             } else {
                 holder.binding.checkBox.setChecked(false);
+            }
+
+            if (mSelectedModelItem.contains(item)) {
+                holder.itemView.setBackgroundColor(Color.CYAN);
+            } else {
+                holder.itemView.setBackgroundColor(Color.WHITE);
             }
         }
 

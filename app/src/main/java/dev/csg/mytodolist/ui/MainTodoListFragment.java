@@ -18,16 +18,12 @@ import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
@@ -63,12 +59,6 @@ public class MainTodoListFragment extends Fragment {
     private ActionMode mActionMode;
     private View mFab;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
-
-    }
 
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
         @Override
@@ -338,7 +328,6 @@ public class MainTodoListFragment extends Fragment {
         private void setItems(List<Todo> items) {
             this.mItems = items;
             mItemsFull = new ArrayList<>(mItems);
-//            mItemsFull.addAll(mItems);
             notifyDataSetChanged();
         }
 
@@ -376,6 +365,7 @@ public class MainTodoListFragment extends Fragment {
                 final Todo item = mItems.get(viewHolder.getAdapterPosition());
                 mListener.onClicked(viewHolder.getAdapterPosition(), item);
             });
+
             view.setOnLongClickListener(v -> {
                 final Todo item = mItems.get(viewHolder.getAdapterPosition());
                 return mListener.onLongClicked(v, viewHolder.getAdapterPosition(), item);
