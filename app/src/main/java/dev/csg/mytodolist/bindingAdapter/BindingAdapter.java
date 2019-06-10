@@ -15,7 +15,12 @@ public class BindingAdapter {
     }
 
 //    @androidx.databinding.BindingAdapter("done")
-//    public static void isSelectedTaskDone(TextView textView) {
+//    public static void isSelectedTaskDone(TextView textView, boolean isChecked) {
+//        if (isChecked) {
 //
+//            textView.setText("안채크");
+//        } else {
+//            textView.setText("체크");
+//        }
 //    }
 }

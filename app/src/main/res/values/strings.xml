@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MyTodoList</string>
+    <string name="app_name">할일 목록</string>
     <string name="action_settings">기본목록</string>
     <string name="action_done_list">완료 목록</string>
     <string name="action_search">검색</string>

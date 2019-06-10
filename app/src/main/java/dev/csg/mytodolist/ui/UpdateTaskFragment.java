@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -33,7 +34,7 @@ import dev.csg.mytodolist.repository.AppDatabase;
 public class UpdateTaskFragment extends Fragment {
     private Todo mTodo;
     private EditText mEditText;
-    private ImageView imageView;
+    private ImageView mImageView;
     private EditText mDateEditText;
     private String mDate;
 
@@ -48,7 +49,7 @@ public class UpdateTaskFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_update_task, container, false);
 
-        imageView = view.findViewById(R.id.btn_date_picker_dialog);
+        mImageView = view.findViewById(R.id.btn_date_picker_dialog);
         mDateEditText = view.findViewById(R.id.date_edit_text);
         mEditText = view.findViewById(R.id.edit_text);
 
@@ -68,7 +69,7 @@ public class UpdateTaskFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        imageView.setOnClickListener(v -> {
+        mImageView.setOnClickListener(v -> {
             DialogFragment newFragment = new DatePickerFragment((view1, year, month, dayOfMonth) -> {
                 Calendar cal = Calendar.getInstance();
                 cal.set(year, month, dayOfMonth, 0, 0);
@@ -77,10 +78,28 @@ public class UpdateTaskFragment extends Fragment {
                 DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL);
                 mDate = dateFormat.format(chosenDate);
                 // Display the formatted date
-                mDateEditText.setText(mDate);
+
+                if (mDate.isEmpty()) {
+
+                } else {
+
+                    mDateEditText.setText(mDate);
+                }
+
             });
             newFragment.show(requireActivity().getSupportFragmentManager(), "datePicker");
         });
+
+        CheckBox checkBox = view.findViewById(R.id.check_box);
+        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                buttonView.setText("작업 완료!");
+            } else {
+                buttonView.setText("작업을 완료하시겠습니까?");
+            }
+        });
+
+
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -98,9 +117,15 @@ public class UpdateTaskFragment extends Fragment {
 
             mTodo.setTitle(mEditText.getText().toString());
             mTodo.setDate(mDateEditText.getText().toString());
+            if (mDateEditText.getText().toString().isEmpty()) {
+                mTodo.setDate("");
+            } else {
 
-            AppDatabase.getInstance(requireContext()).todoDao().update(mTodo);
+                AppDatabase.getInstance(requireContext()).todoDao().update(mTodo);
+            }
+
             navController.popBackStack();
+
 
             return true;
         }
