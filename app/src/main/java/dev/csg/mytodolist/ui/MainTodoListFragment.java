@@ -1,10 +1,10 @@
 package dev.csg.mytodolist.ui;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,12 +13,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -56,6 +56,7 @@ public class MainTodoListFragment extends Fragment {
     private EditText mEditText;
     private String mTitle;
     private MainTodoListAdapter mAdapter;
+    private TextView textView;
 
     private ActionMode mActionMode;
     private View mFab;
@@ -440,6 +441,14 @@ public class MainTodoListFragment extends Fragment {
             } else {
                 holder.itemView.setBackgroundColor(Color.WHITE);
             }
+
+            // Todo : 제목 없는거 여기서 로직 처리
+            if (TextUtils.isEmpty(item.getTitle())) {
+                holder.binding.textViewTitle.setVisibility(View.GONE);
+            } else {
+                holder.binding.textViewTitle.setVisibility(View.VISIBLE);
+            }
+
         }
 
         @Override

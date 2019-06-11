@@ -1,7 +1,10 @@
 package dev.csg.mytodolist.ui;
 
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Vibrator;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -9,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -65,7 +69,6 @@ public class NewTaskFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-
     }
 
     private void getDatePickerDialog() {
@@ -93,11 +96,20 @@ public class NewTaskFragment extends Fragment {
             case R.id.check:
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
 
-                String mTitle = mTitleEditText.getText().toString();
-                AppDatabase.getInstance(requireActivity()).todoDao().insertAll(
-                        new Todo(mTitle,mDate)
-                );
-                mTitleEditText.setText("");
+                Vibrator vibe = (Vibrator) requireContext().getSystemService(Context.VIBRATOR_SERVICE);
+
+                if (TextUtils.isEmpty(mTitleEditText.getText().toString())) {
+                    if (vibe != null) {
+                        vibe.vibrate(100);
+                        Toast.makeText(requireContext(), "처음 작업을 입력하세요!", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                } else {
+                    String mTitle = mTitleEditText.getText().toString();
+                    AppDatabase.getInstance(requireActivity()).todoDao().insertAll(
+                            new Todo(mTitle, mDate)
+                    );
+                }
 
                 navController.popBackStack();
                 return true;
