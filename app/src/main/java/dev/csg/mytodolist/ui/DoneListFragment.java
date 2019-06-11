@@ -49,7 +49,6 @@ public class DoneListFragment extends Fragment {
 
 
     public DoneListFragment() {
-        // Required empty public constructor
         setHasOptionsMenu(true);
     }
 

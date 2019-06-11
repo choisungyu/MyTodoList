@@ -1,7 +1,7 @@
 package dev.csg.mytodolist.ui;
 
 
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Filter;
@@ -129,7 +130,6 @@ public class MainTodoListFragment extends Fragment {
             mode.finish();
         });
         builder.setNegativeButton("아니오", (dialog, id) -> {
-            // User cancelled the dialog
             dialog.cancel();
         });
         AlertDialog dialog = builder.create();
@@ -154,7 +154,6 @@ public class MainTodoListFragment extends Fragment {
             mode.finish();
         });
         builder.setNegativeButton("아니오", (dialog, id) -> {
-            // User cancelled the dialog
             dialog.cancel();
         });
         AlertDialog dialog = builder.create();
@@ -186,7 +185,6 @@ public class MainTodoListFragment extends Fragment {
 
 
     public MainTodoListFragment() {
-        // Required empty public constructor
         setHasOptionsMenu(true);
 
     }

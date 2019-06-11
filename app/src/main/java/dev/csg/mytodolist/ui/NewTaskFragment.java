@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,13 +32,10 @@ import dev.csg.mytodolist.repository.AppDatabase;
 public class NewTaskFragment extends Fragment {
 
     private EditText mTitleEditText;
-    private ImageView imageView;
-    private String mTitle;
     private EditText mDateEditText;
     private String mDate;
 
     public NewTaskFragment() {
-        // Required empty public constructor
         setHasOptionsMenu(true);
     }
 
@@ -52,28 +48,37 @@ public class NewTaskFragment extends Fragment {
         // 새로 입력 받은 값
         mTitleEditText = view.findViewById(R.id.edit_text);
         mDateEditText = view.findViewById(R.id.date_edit_text);
-        imageView = view.findViewById(R.id.btn_date_picker_dialog);
-
+        mDateEditText.setFocusable(false);
+        mDateEditText.setClickable(false);
 
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        imageView.setOnClickListener(v -> {
-            DialogFragment newFragment = new DatePickerFragment((view1, year, month, dayOfMonth) -> {
-                Calendar cal = Calendar.getInstance();
-                cal.set(year, month, dayOfMonth, 0, 0);
-                Date chosenDate = cal.getTime();
-
-                DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL);
-                mDate = dateFormat.format(chosenDate);
-                // Display the formatted date
-                mDateEditText.setText(mDate);
-            });
-            newFragment.show(requireActivity().getSupportFragmentManager(), "datePicker");
+        mDateEditText.setOnClickListener(v -> {
+            getDatePickerDialog();
+        });
+        view.findViewById(R.id.ll_date_picker).setOnClickListener(v -> {
+            getDatePickerDialog();
         });
         super.onViewCreated(view, savedInstanceState);
+
+
+
+    }
+
+    private void getDatePickerDialog() {
+        DialogFragment newFragment = new DatePickerFragment((view1, year, month, dayOfMonth) -> {
+            Calendar cal = Calendar.getInstance();
+            cal.set(year, month, dayOfMonth, 0, 0);
+            Date chosenDate = cal.getTime();
+
+            DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL);
+            mDate = dateFormat.format(chosenDate);
+            mDateEditText.setText(mDate);
+        });
+        newFragment.show(requireActivity().getSupportFragmentManager(), "datePicker");
     }
 
     @Override
@@ -88,7 +93,6 @@ public class NewTaskFragment extends Fragment {
             case R.id.check:
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
 
-                // newTask 에서도 삽입 있어야 함
                 String mTitle = mTitleEditText.getText().toString();
                 AppDatabase.getInstance(requireActivity()).todoDao().insertAll(
                         new Todo(mTitle,mDate)

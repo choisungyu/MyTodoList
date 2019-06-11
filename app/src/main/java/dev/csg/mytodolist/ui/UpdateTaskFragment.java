@@ -2,14 +2,6 @@ package dev.csg.mytodolist.ui;
 
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,8 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -35,10 +33,10 @@ import dev.csg.mytodolist.repository.AppDatabase;
 public class UpdateTaskFragment extends Fragment {
     private Todo mTodo;
     private EditText mEditText;
-    private ImageView mImageView;
     private EditText mDateEditText;
     private String mDate;
     private LinearLayout mLinearLayout;
+    private CheckBox mCheckBox;
 
     public UpdateTaskFragment() {
         setHasOptionsMenu(true);
@@ -51,7 +49,6 @@ public class UpdateTaskFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_update_task, container, false);
 
-        mImageView = view.findViewById(R.id.btn_date_picker_dialog);
         mDateEditText = view.findViewById(R.id.date_edit_text);
         mDateEditText.setFocusable(false);
         mDateEditText.setClickable(false);
@@ -88,8 +85,8 @@ public class UpdateTaskFragment extends Fragment {
             }
         });
 
-        CheckBox checkBox = view.findViewById(R.id.check_box);
-        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        mCheckBox = view.findViewById(R.id.check_box);
+        mCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 buttonView.setText("작업 완료!");
             } else {
@@ -136,6 +133,18 @@ public class UpdateTaskFragment extends Fragment {
             }
 
             AppDatabase.getInstance(requireContext()).todoDao().update(mTodo);
+
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+
+                int id = bundle.getInt("id");
+                mTodo = AppDatabase.getInstance(requireContext()).todoDao().getTodoById(id);
+
+                if (mCheckBox.isChecked()) {
+                    mTodo.setDone(true);
+                    AppDatabase.getInstance(requireContext()).todoDao().update(mTodo);
+                }
+            }
 
             navController.popBackStack();
 
