@@ -33,9 +33,9 @@
         android:text="만기일" />
 
     <LinearLayout
+        android:id="@+id/ll_date_picker"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content">
 
         <EditText
             android:id="@+id/date_edit_text"

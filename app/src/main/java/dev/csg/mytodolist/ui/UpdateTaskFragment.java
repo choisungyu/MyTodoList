@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -37,6 +38,7 @@ public class UpdateTaskFragment extends Fragment {
     private ImageView mImageView;
     private EditText mDateEditText;
     private String mDate;
+    private LinearLayout mLinearLayout;
 
     public UpdateTaskFragment() {
         setHasOptionsMenu(true);
@@ -51,7 +53,10 @@ public class UpdateTaskFragment extends Fragment {
 
         mImageView = view.findViewById(R.id.btn_date_picker_dialog);
         mDateEditText = view.findViewById(R.id.date_edit_text);
+        mDateEditText.setFocusable(false);
+        mDateEditText.setClickable(false);
         mEditText = view.findViewById(R.id.edit_text);
+        mLinearLayout = view.findViewById(R.id.ll_date_picker);
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -69,25 +74,18 @@ public class UpdateTaskFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        mImageView.setOnClickListener(v -> {
-            DialogFragment newFragment = new DatePickerFragment((view1, year, month, dayOfMonth) -> {
-                Calendar cal = Calendar.getInstance();
-                cal.set(year, month, dayOfMonth, 0, 0);
-                Date chosenDate = cal.getTime();
+        mLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getDatePickerDialog();
+            }
+        });
 
-                DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL);
-                mDate = dateFormat.format(chosenDate);
-                // Display the formatted date
-
-                if (mDate.isEmpty()) {
-
-                } else {
-
-                    mDateEditText.setText(mDate);
-                }
-
-            });
-            newFragment.show(requireActivity().getSupportFragmentManager(), "datePicker");
+        mDateEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getDatePickerDialog();
+            }
         });
 
         CheckBox checkBox = view.findViewById(R.id.check_box);
@@ -101,6 +99,22 @@ public class UpdateTaskFragment extends Fragment {
 
 
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    private void getDatePickerDialog() {
+        DialogFragment newFragment = new DatePickerFragment((view1, year, month, dayOfMonth) -> {
+            Calendar cal = Calendar.getInstance();
+            cal.set(year, month, dayOfMonth, 0, 0);
+            Date chosenDate = cal.getTime();
+
+            DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL);
+            mDate = dateFormat.format(chosenDate);
+            // Display the formatted date
+
+            mDateEditText.setText(mDate);
+
+        });
+        newFragment.show(UpdateTaskFragment.this.requireActivity().getSupportFragmentManager(), "datePicker");
     }
 
 
@@ -119,10 +133,9 @@ public class UpdateTaskFragment extends Fragment {
             mTodo.setDate(mDateEditText.getText().toString());
             if (mDateEditText.getText().toString().isEmpty()) {
                 mTodo.setDate("");
-            } else {
-
-                AppDatabase.getInstance(requireContext()).todoDao().update(mTodo);
             }
+
+            AppDatabase.getInstance(requireContext()).todoDao().update(mTodo);
 
             navController.popBackStack();
 
