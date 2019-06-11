@@ -56,7 +56,6 @@ public class MainTodoListFragment extends Fragment {
     private EditText mEditText;
     private String mTitle;
     private MainTodoListAdapter mAdapter;
-    private TextView textView;
 
     private ActionMode mActionMode;
     private View mFab;
@@ -212,7 +211,6 @@ public class MainTodoListFragment extends Fragment {
             }
         });
 
-//        searchView.setQueryHint("탐색");
     }
 
     @Override
@@ -277,7 +275,6 @@ public class MainTodoListFragment extends Fragment {
         mAdapter = new MainTodoListAdapter(new MainTodoListAdapter.OnItemClickedListener() {
             @Override
             public boolean onLongClicked(View view, int position, Todo model) {
-                // 액션모드 진입중이면 롱클릭 취소 -> onClicked로 이벤트 전달
 
                 // 만약 if 문 없으면 없으나 있으나 맨 처음에 부터 시작되는 로직 ( 진동 계속 먹음 )
 //                if (mActionMode != null) {
@@ -405,20 +402,12 @@ public class MainTodoListFragment extends Fragment {
             CheckBox checkBox = view.findViewById(R.id.checkBox);
             checkBox.setOnClickListener(v -> {
                 final Todo item = mItems.get(viewHolder.getAdapterPosition());
-//                item.setDone(checkBox.isChecked());
-                // 체크 된 애로 보는거(boolean = 0) => 바뀐것을 누구에게 알려줘야 함
-                // item 에서 isDone 을 1로 만듦
 
                 item.setDone(checkBox.isChecked());
-//                Toast.makeText(view.getContext(), "" + AppDatabase.getInstance(view.getContext()).todoDao().getDoneTask().getValue(), Toast.LENGTH_SHORT).show();
 
-                // query 가져와서 getInstance 해라
                 AppDatabase.getInstance(view.getContext()).todoDao().update(item);// null
 
 
-                // 체크된 애들 db 에 저장
-
-//                checkBox.setChecked(false);
             });
 
             return viewHolder;

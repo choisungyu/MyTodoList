@@ -3,6 +3,7 @@ package dev.csg.mytodolist.ui;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -100,7 +101,7 @@ public class NewTaskFragment extends Fragment {
 
                 if (TextUtils.isEmpty(mTitleEditText.getText().toString())) {
                     if (vibe != null) {
-                        vibe.vibrate(100);
+                        vibe.vibrate(50);
                         Toast.makeText(requireContext(), "처음 작업을 입력하세요!", Toast.LENGTH_SHORT).show();
                         return true;
                     }

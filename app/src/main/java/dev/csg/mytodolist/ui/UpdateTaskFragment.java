@@ -1,7 +1,10 @@
 package dev.csg.mytodolist.ui;
 
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Vibrator;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -126,25 +130,37 @@ public class UpdateTaskFragment extends Fragment {
         if (item.getItemId() == R.id.check) {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
 
-            mTodo.setTitle(mEditText.getText().toString());
-            mTodo.setDate(mDateEditText.getText().toString());
-            if (mDateEditText.getText().toString().isEmpty()) {
-                mTodo.setDate("");
+            Vibrator vibe = (Vibrator) requireContext().getSystemService(Context.VIBRATOR_SERVICE);
+
+
+            // 왜 있는거지,,,?
+//            if (mDateEditText.getText().toString().isEmpty()) {
+//                mTodo.setDate("");
+//            }
+
+            if (TextUtils.isEmpty(mEditText.getText().toString())) {
+                if (vibe != null) {
+                    vibe.vibrate(50);
+                    Toast.makeText(requireContext(), "처음 작업을 입력하세요!", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            } else {
+                Bundle bundle = getArguments();
+                if (bundle != null) {
+
+                    int id = bundle.getInt("id");
+                    mTodo = AppDatabase.getInstance(requireContext()).todoDao().getTodoById(id);
+                    mTodo.setTitle(mEditText.getText().toString());
+                    mTodo.setDate(mDateEditText.getText().toString());
+
+                    if (mCheckBox.isChecked()) {
+                        mTodo.setDone(true);
+                        AppDatabase.getInstance(requireContext()).todoDao().update(mTodo);
+                    }
+                }
             }
 
             AppDatabase.getInstance(requireContext()).todoDao().update(mTodo);
-
-            Bundle bundle = getArguments();
-            if (bundle != null) {
-
-                int id = bundle.getInt("id");
-                mTodo = AppDatabase.getInstance(requireContext()).todoDao().getTodoById(id);
-
-                if (mCheckBox.isChecked()) {
-                    mTodo.setDone(true);
-                    AppDatabase.getInstance(requireContext()).todoDao().update(mTodo);
-                }
-            }
 
             navController.popBackStack();
 
