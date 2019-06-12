@@ -132,7 +132,6 @@ public class UpdateTaskFragment extends Fragment {
 
             Vibrator vibe = (Vibrator) requireContext().getSystemService(Context.VIBRATOR_SERVICE);
 
-
             // 왜 있는거지,,,?
 //            if (mDateEditText.getText().toString().isEmpty()) {
 //                mTodo.setDate("");

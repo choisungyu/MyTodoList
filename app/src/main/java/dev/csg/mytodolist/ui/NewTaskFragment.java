@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,6 +40,8 @@ public class NewTaskFragment extends Fragment {
     private EditText mTitleEditText;
     private EditText mDateEditText;
     private String mDate;
+    private ImageView mCancelImageView;
+    private ImageView mDatePickerImageView;
 
     public NewTaskFragment() {
         setHasOptionsMenu(true);
@@ -56,6 +59,9 @@ public class NewTaskFragment extends Fragment {
         mDateEditText.setFocusable(false);
         mDateEditText.setClickable(false);
 
+        mCancelImageView = view.findViewById(R.id.btn_cancel_date_picker_dialog);
+        mDatePickerImageView = view.findViewById(R.id.btn_date_picker_dialog);
+
         return view;
     }
 
@@ -64,13 +70,17 @@ public class NewTaskFragment extends Fragment {
         mDateEditText.setOnClickListener(v -> {
             getDatePickerDialog();
         });
-        view.findViewById(R.id.ll_date_picker).setOnClickListener(v -> {
+        mDatePickerImageView.setOnClickListener(v -> {
             getDatePickerDialog();
         });
+
+        mCancelImageView.setOnClickListener(v -> {
+            mDateEditText.setText("");
+            mCancelImageView.setVisibility(View.GONE);
+        });
         super.onViewCreated(view, savedInstanceState);
-
-
     }
+
 
     private void getDatePickerDialog() {
         DialogFragment newFragment = new DatePickerFragment((view1, year, month, dayOfMonth) -> {
@@ -81,6 +91,8 @@ public class NewTaskFragment extends Fragment {
             DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL);
             mDate = dateFormat.format(chosenDate);
             mDateEditText.setText(mDate);
+            mCancelImageView.setVisibility(View.VISIBLE);
+
         });
         newFragment.show(requireActivity().getSupportFragmentManager(), "datePicker");
     }
