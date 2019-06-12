@@ -19,6 +19,7 @@ public class DatePickerFragment extends DialogFragment {
 
     private DatePickerDialog.OnDateSetListener mListener;
 
+    // dateSet 을 외부에서 하게 도와주는 listener
     DatePickerFragment(DatePickerDialog.OnDateSetListener listener) {
         mListener = listener;
     }

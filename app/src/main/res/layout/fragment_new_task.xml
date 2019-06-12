@@ -29,7 +29,6 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <LinearLayout
-        android:id="@+id/ll_date_picker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -54,6 +53,28 @@
             android:layout_marginStart="12dp"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_cancel_white_24dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_time_picker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/time_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="시간이 설정되지 않았습니다" />
+
+        <ImageView
+            android:id="@+id/btn_time_picker_dialog"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:srcCompat="@drawable/ic_access_time_black_24dp" />
 
     </LinearLayout>
 
