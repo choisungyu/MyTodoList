@@ -5,23 +5,13 @@ import android.view.View;
 import android.widget.TextView;
 
 public class BindingAdapter {
-    @androidx.databinding.BindingAdapter("date")
-    public static void isSelectedDate(TextView textView, String date) {
+    @androidx.databinding.BindingAdapter({"date", "time"})
+    public static void isSelectedDate(TextView textView, String date, String time) {
         if (TextUtils.isEmpty(date)) {
             textView.setVisibility(View.GONE);
         } else {
             textView.setVisibility(View.VISIBLE);
-            textView.setText(date);
+            textView.setText(new StringBuilder().append(date).append(", ").append(time).toString());
         }
     }
-
-//    @androidx.databinding.BindingAdapter("done")
-//    public static void isSelectedTaskDone(TextView textView, boolean isChecked) {
-//        if (isChecked) {
-//
-//            textView.setText("안채크");
-//        } else {
-//            textView.setText("체크");
-//        }
-//    }
 }

@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -431,7 +430,6 @@ public class MainTodoListFragment extends Fragment {
                 holder.itemView.setBackgroundColor(Color.WHITE);
             }
 
-            // Todo : 제목 없는거 여기서 로직 처리
             if (TextUtils.isEmpty(item.getTitle())) {
                 holder.binding.textViewTitle.setVisibility(View.GONE);
             } else {

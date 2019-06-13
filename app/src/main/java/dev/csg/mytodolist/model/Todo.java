@@ -11,7 +11,16 @@ public class Todo {
 
     private String title;
     private String date;
+    private String time;
     private Boolean isDone = false;
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 
     public Boolean getDone() {
         return isDone;
@@ -24,9 +33,15 @@ public class Todo {
     public Todo() {
     }
 
-    public Todo(String title, String date) {
+    public Todo(String date, String time) {
+        this.date = date;
+        this.time = time;
+    }
+
+    public Todo(String title, String date, String time) {
         this.title = title;
         this.date = date;
+        this.time = time;
     }
 
     public Todo(String title) {
