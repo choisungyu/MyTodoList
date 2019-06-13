@@ -263,9 +263,9 @@ public class MainTodoListFragment extends Fragment {
 
         MobileAds.initialize(requireContext(), "ca-app-pub-8544040742728303~7451111542");
 
-        AdView mAdView = view.findViewById(R.id.ad_View);
+        AdView adView = view.findViewById(R.id.ad_View);
         AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+        adView.loadAd(adRequest);
 
         MainViewModel mainTodoViewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel.class);
 
