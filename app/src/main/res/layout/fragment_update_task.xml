@@ -50,11 +50,36 @@
             android:layout_height="30dp"
             app:srcCompat="@drawable/ic_event_black_24dp" />
 
+        <ImageView
+            android:id="@+id/btn_cancel_date_picker_dialog"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="12dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_cancel_white_24dp" />
+
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/ll_time_picker"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="목록에 추가합니다." />
+        android:visibility="gone"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/time_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="시간이 설정되지 않았습니다" />
+
+        <ImageView
+            android:id="@+id/btn_time_picker_dialog"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:srcCompat="@drawable/ic_access_time_black_24dp" />
+
+    </LinearLayout>
 
 </LinearLayout>

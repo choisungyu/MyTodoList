@@ -1,6 +1,7 @@
 package dev.csg.mytodolist.ui;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -36,11 +38,18 @@ import dev.csg.mytodolist.repository.AppDatabase;
  */
 public class UpdateTaskFragment extends Fragment {
     private Todo mTodo;
+
+    private LinearLayout mTimePickerLayout;
+
+    private CheckBox mCheckBox;
+
     private EditText mEditText;
     private EditText mDateEditText;
-    private String mDate;
-    private LinearLayout mLinearLayout;
-    private CheckBox mCheckBox;
+    private EditText mTimeEditText;
+
+    private ImageView mCancelImageView;
+    private ImageView mDatePickerImageView;
+    private ImageView mTimePickerImageView;
 
     public UpdateTaskFragment() {
         setHasOptionsMenu(true);
@@ -56,8 +65,17 @@ public class UpdateTaskFragment extends Fragment {
         mDateEditText = view.findViewById(R.id.date_edit_text);
         mDateEditText.setFocusable(false);
         mDateEditText.setClickable(false);
+
+        mTimeEditText = view.findViewById(R.id.time_edit_text);
+        mTimeEditText.setFocusable(false);
+        mTimeEditText.setClickable(false);
+
+
+        mCancelImageView = view.findViewById(R.id.btn_cancel_date_picker_dialog);
+        mDatePickerImageView = view.findViewById(R.id.btn_date_picker_dialog);
+        mTimePickerImageView = view.findViewById(R.id.btn_time_picker_dialog);
+
         mEditText = view.findViewById(R.id.edit_text);
-        mLinearLayout = view.findViewById(R.id.ll_date_picker);
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -70,24 +88,36 @@ public class UpdateTaskFragment extends Fragment {
             mDateEditText.setText(mTodo.getDate());
         }
 
+
+        mTimePickerLayout = view.findViewById(R.id.ll_time_picker);
+
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        mLinearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getDatePickerDialog();
-            }
+        mDateEditText.setOnClickListener(v -> getDatePickerDialog());
+        mDatePickerImageView.setOnClickListener(v -> {
+            getDatePickerDialog();
         });
 
-        mDateEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getDatePickerDialog();
-            }
+        mCancelImageView.setOnClickListener(v -> {
+            mDateEditText.setText(null); //  값 초기화 시켜야 하는데 , 초기화가 안됨....
+//            mDateEditText.getText().clear();
+
+
+            mCancelImageView.setVisibility(View.GONE);
+
+            // 취소 했을시, time 저장된 값 초기화 시켜야 함
+            mTimeEditText.setText(null);
+//            mTimeEditText.getText().clear();
+
+            mTimePickerLayout.setVisibility(View.GONE);
         });
+
+        mTimeEditText.setOnClickListener(v -> getTimePickerDialog());
+
+        mTimePickerImageView.setOnClickListener(v -> getTimePickerDialog());
 
         mCheckBox = view.findViewById(R.id.check_box);
         mCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -109,13 +139,28 @@ public class UpdateTaskFragment extends Fragment {
             Date chosenDate = cal.getTime();
 
             DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL);
-            mDate = dateFormat.format(chosenDate);
+            String date = dateFormat.format(chosenDate);
             // Display the formatted date
 
-            mDateEditText.setText(mDate);
+            mDateEditText.setText(date);
+
+            mCancelImageView.setVisibility(View.VISIBLE);
+            mTimePickerLayout.setVisibility(View.VISIBLE);
 
         });
         newFragment.show(UpdateTaskFragment.this.requireActivity().getSupportFragmentManager(), "datePicker");
+    }
+
+    private void getTimePickerDialog() {
+        @SuppressLint("DefaultLocale") DialogFragment timeFragment = new TimePickerFragment((view, hourOfDay, minute) -> {
+
+            boolean isPM = (hourOfDay >= 12);
+            String time = String.format("%02d:%02d %s",
+                    (hourOfDay == 12 || hourOfDay == 0) ? 12 : hourOfDay % 12, minute, isPM ? "오후" : "오전");
+            mTimeEditText.setText(time);
+
+        });
+        timeFragment.show(requireActivity().getSupportFragmentManager(), "TimePicker");
     }
 
 
@@ -132,11 +177,6 @@ public class UpdateTaskFragment extends Fragment {
 
             Vibrator vibe = (Vibrator) requireContext().getSystemService(Context.VIBRATOR_SERVICE);
 
-            // 왜 있는거지,,,?
-//            if (mDateEditText.getText().toString().isEmpty()) {
-//                mTodo.setDate("");
-//            }
-
             if (TextUtils.isEmpty(mEditText.getText().toString())) {
                 if (vibe != null) {
                     vibe.vibrate(50);
@@ -151,6 +191,7 @@ public class UpdateTaskFragment extends Fragment {
                     mTodo = AppDatabase.getInstance(requireContext()).todoDao().getTodoById(id);
                     mTodo.setTitle(mEditText.getText().toString());
                     mTodo.setDate(mDateEditText.getText().toString());
+                    mTodo.setTime(mTimeEditText.getText().toString());
 
                     if (mCheckBox.isChecked()) {
                         mTodo.setDone(true);

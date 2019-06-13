@@ -82,18 +82,20 @@ public class NewTaskFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         mDateEditText.setOnClickListener(v -> getDatePickerDialog());
-        mDatePickerImageView.setOnClickListener(v -> getDatePickerDialog());
+        mDatePickerImageView.setOnClickListener(v -> {
+            getDatePickerDialog();
+        });
 
         mCancelImageView.setOnClickListener(v -> {
             mDateEditText.setText(null); //  값 초기화 시켜야 하는데 , 초기화가 안됨....
-            mDateEditText.getText().clear();
+//            mDateEditText.getText().clear();
 
 
             mCancelImageView.setVisibility(View.GONE);
 
             // 취소 했을시, time 저장된 값 초기화 시켜야 함
             mTimeEditText.setText(null);
-            mTimeEditText.getText().clear();
+//            mTimeEditText.getText().clear();
 
             mTimePickerLayout.setVisibility(View.GONE);
         });

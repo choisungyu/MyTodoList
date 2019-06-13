@@ -23,9 +23,6 @@ public interface TodoDao {
     void insertAll(Todo todo);
 
     @Delete
-    void delete(Todo todo);
-
-    @Delete
     void deleteAll(List<Todo> todos);
 
     @Update

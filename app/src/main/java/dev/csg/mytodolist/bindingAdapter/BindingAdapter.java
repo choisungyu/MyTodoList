@@ -11,7 +11,11 @@ public class BindingAdapter {
             textView.setVisibility(View.GONE);
         } else {
             textView.setVisibility(View.VISIBLE);
-            textView.setText(new StringBuilder().append(date).append(", ").append(time).toString());
+            textView.setText(new StringBuilder().append(date).append(".").toString());
+            if (!TextUtils.isEmpty(time)) {
+                textView.setVisibility(View.VISIBLE);
+                textView.setText(new StringBuilder().append(date).append(", ").append(time).toString());
+            }
         }
     }
 }
