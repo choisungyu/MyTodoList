@@ -157,6 +157,7 @@ public class UpdateTaskFragment extends Fragment {
             boolean isPM = (hourOfDay >= 12);
             String time = String.format("%02d:%02d %s",
                     (hourOfDay == 12 || hourOfDay == 0) ? 12 : hourOfDay % 12, minute, isPM ? "오후" : "오전");
+
             mTimeEditText.setText(time);
 
         });

@@ -23,11 +23,14 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.work.Data;
 
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
+import dev.csg.mytodolist.NotificationWorker;
 import dev.csg.mytodolist.R;
 import dev.csg.mytodolist.model.Todo;
 import dev.csg.mytodolist.repository.AppDatabase;
@@ -48,7 +51,9 @@ public class NewTaskFragment extends Fragment {
     private ImageView mDatePickerImageView;
     private ImageView mTimePickerImageView;
 
-    private Calendar mCalendar;
+    private long mLongChosenDate;
+    private int mHourOfDay;
+    private int mMinute;
 
     public NewTaskFragment() {
         setHasOptionsMenu(true);
@@ -88,14 +93,10 @@ public class NewTaskFragment extends Fragment {
 
         mCancelImageView.setOnClickListener(v -> {
             mDateEditText.setText(null); //  값 초기화 시켜야 하는데 , 초기화가 안됨....
-//            mDateEditText.getText().clear();
-
 
             mCancelImageView.setVisibility(View.GONE);
 
-            // 취소 했을시, time 저장된 값 초기화 시켜야 함
             mTimeEditText.setText(null);
-//            mTimeEditText.getText().clear();
 
             mTimePickerLayout.setVisibility(View.GONE);
         });
@@ -111,12 +112,12 @@ public class NewTaskFragment extends Fragment {
 
     private void getDatePickerDialog() {
         DialogFragment newFragment = new DatePickerFragment((view1, year, month, dayOfMonth) -> {
-            mCalendar = Calendar.getInstance();
-            mCalendar.set(year, month, dayOfMonth, 0, 0);
-            Date chosenDate = mCalendar.getTime();
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(year, month, dayOfMonth, 0, 0);
+            mLongChosenDate = calendar.getTimeInMillis();
 
             DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL);
-            String date = dateFormat.format(chosenDate);
+            String date = dateFormat.format(mLongChosenDate);
             mDateEditText.setText(date);
             mCancelImageView.setVisibility(View.VISIBLE);
             mTimePickerLayout.setVisibility(View.VISIBLE);
@@ -127,6 +128,8 @@ public class NewTaskFragment extends Fragment {
 
     private void getTimePickerDialog() {
         @SuppressLint("DefaultLocale") DialogFragment timeFragment = new TimePickerFragment((view, hourOfDay, minute) -> {
+            mHourOfDay = hourOfDay;
+            mMinute = minute;
 
             boolean isPM = (hourOfDay >= 12);
             String time = String.format("%02d:%02d %s",
@@ -162,7 +165,26 @@ public class NewTaskFragment extends Fragment {
                         new Todo(mTitle, getDate(), getTime())
                 );
             }
+            String tag = UUID.randomUUID().toString();
 
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date(mLongChosenDate));
+            calendar.set(Calendar.HOUR_OF_DAY, mHourOfDay);
+            calendar.set(Calendar.MINUTE, mMinute);
+
+            long alertTime = calendar.getTimeInMillis() - System.currentTimeMillis();
+
+            int id = (int) (Math.random() * 50 + 1);
+
+            // Data 를 만들어서 빌더를 통해서 보냄
+            Data data = new Data.Builder()
+                    .putString("title", getTitle())
+                    .putString("date", getDate())
+                    .putString("time", getTime())
+                    .putInt("id", id)
+                    .build();
+
+            NotificationWorker.scheduleReminder(alertTime, data, tag);
 
             navController.popBackStack();
             return true;
@@ -178,4 +200,12 @@ public class NewTaskFragment extends Fragment {
     private String getTime() {
         return mTimeEditText.getText().toString();
     }
+
+    private String getTitle() {
+        return mTitleEditText.getText().toString();
+    }
+
+//    private String getTag() {
+//        return UUID.randomUUID().toString();
+//    }
 }

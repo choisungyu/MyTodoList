@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Set;
 
 import dev.csg.mytodolist.MainViewModel;
+import dev.csg.mytodolist.NotificationWorker;
 import dev.csg.mytodolist.R;
 import dev.csg.mytodolist.databinding.ItemTodoListBinding;
 import dev.csg.mytodolist.model.Todo;
@@ -127,6 +128,8 @@ public class MainTodoListFragment extends Fragment {
             );
             mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
             mode.finish();
+
+//            NotificationWorker.cancelReminder(tag);
         });
         builder.setNegativeButton("아니오", (dialog, id) -> {
             dialog.cancel();
