@@ -1,6 +1,7 @@
 package dev.csg.mytodolist.ui;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -123,13 +124,22 @@ public class MainTodoListFragment extends Fragment {
         builder.setCancelable(false);
         builder.setPositiveButton("예", (dialog, id) -> {
             // User clicked OK button
+
+
+            for (Todo todo : mAdapter.getSelectedList()) {
+                String tag = todo.getTag();
+                todo.setTag(tag);
+                NotificationWorker.cancelReminder(todo.getTag());
+            }
+
             AppDatabase.getInstance(MainTodoListFragment.this.requireActivity()).todoDao().deleteAll(
                     mAdapter.getSelectedList()
+
             );
+
             mActionMode.setTitle(mAdapter.getSelectedList().size() + "");
             mode.finish();
 
-//            NotificationWorker.cancelReminder(tag);
         });
         builder.setNegativeButton("아니오", (dialog, id) -> {
             dialog.cancel();
@@ -324,12 +334,7 @@ public class MainTodoListFragment extends Fragment {
         recyclerView.setAdapter(mAdapter);
 
         // unchecked (boolean = 0) observing
-        mainTodoViewModel.getMainTaskItems().observe(requireActivity(), new Observer<List<Todo>>() {
-            @Override
-            public void onChanged(List<Todo> todos) {
-                mAdapter.setItems(todos);
-            }
-        });
+        mainTodoViewModel.getMainTaskItems().observe(requireActivity(), todos -> mAdapter.setItems(todos));
 
 
     }
@@ -408,7 +413,6 @@ public class MainTodoListFragment extends Fragment {
                 item.setDone(checkBox.isChecked());
 
                 AppDatabase.getInstance(view.getContext()).todoDao().update(item);// null
-
 
             });
 

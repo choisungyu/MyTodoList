@@ -102,6 +102,7 @@ public class DoneListFragment extends Fragment {
         builder.setMessage("작업을 삭제 하시겠습니까?");
         builder.setCancelable(false);
         builder.setPositiveButton("예", (dialog, id) -> {
+
             // User clicked OK button
             AppDatabase.getInstance(DoneListFragment.this.requireActivity()).todoDao().deleteAll(
                     mAdapter.getSelectedList()

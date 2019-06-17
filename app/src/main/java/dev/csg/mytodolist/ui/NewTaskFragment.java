@@ -159,13 +159,13 @@ public class NewTaskFragment extends Fragment {
                     Toast.makeText(requireContext(), "처음 작업을 입력하세요!", Toast.LENGTH_SHORT).show();
                     return true;
                 }
-            } else {
-                String mTitle = mTitleEditText.getText().toString();
-                AppDatabase.getInstance(requireActivity()).todoDao().insertAll(
-                        new Todo(mTitle, getDate(), getTime())
-                );
             }
-            String tag = UUID.randomUUID().toString();
+
+            String mTitle = mTitleEditText.getText().toString();
+            Todo todo = new Todo(mTitle, getDate(), getTime(), getUUIDTag());
+            AppDatabase.getInstance(requireActivity()).todoDao().insertAll(
+                    todo
+            );
 
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date(mLongChosenDate));
@@ -184,7 +184,7 @@ public class NewTaskFragment extends Fragment {
                     .putInt("id", id)
                     .build();
 
-            NotificationWorker.scheduleReminder(alertTime, data, tag);
+            NotificationWorker.scheduleReminder(alertTime, data, todo.getTag());
 
             navController.popBackStack();
             return true;
@@ -205,7 +205,7 @@ public class NewTaskFragment extends Fragment {
         return mTitleEditText.getText().toString();
     }
 
-//    private String getTag() {
-//        return UUID.randomUUID().toString();
-//    }
+    private String getUUIDTag() {
+        return UUID.randomUUID().toString();
+    }
 }

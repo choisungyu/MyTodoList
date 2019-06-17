@@ -12,7 +12,16 @@ public class Todo {
     private String title;
     private String date;
     private String time;
+    private String tag;
     private Boolean isDone = false;
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 
     public String getTime() {
         return time;
@@ -36,6 +45,13 @@ public class Todo {
     public Todo(String date, String time) {
         this.date = date;
         this.time = time;
+    }
+
+    public Todo(String title, String date, String time, String tag) {
+        this.title = title;
+        this.date = date;
+        this.time = time;
+        this.tag = tag;
     }
 
     public Todo(String title, String date, String time) {

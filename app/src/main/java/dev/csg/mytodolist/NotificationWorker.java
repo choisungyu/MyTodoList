@@ -17,8 +17,10 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import dev.csg.mytodolist.model.Todo;
 import dev.csg.mytodolist.ui.NewTaskFragment;
 
 public class NotificationWorker extends Worker {
