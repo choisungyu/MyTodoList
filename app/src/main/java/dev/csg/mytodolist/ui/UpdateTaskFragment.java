@@ -86,6 +86,8 @@ public class UpdateTaskFragment extends Fragment {
                     .getTodoById(id);
             mEditText.setText(mTodo.getTitle());
             mDateEditText.setText(mTodo.getDate());
+            mTimeEditText.setText(mTodo.getTime());
+
         }
 
 
@@ -102,9 +104,7 @@ public class UpdateTaskFragment extends Fragment {
         });
 
         mCancelImageView.setOnClickListener(v -> {
-            mDateEditText.setText(null); //  값 초기화 시켜야 하는데 , 초기화가 안됨....
-//            mDateEditText.getText().clear();
-
+            mDateEditText.setText(null);
 
             mCancelImageView.setVisibility(View.GONE);
 
@@ -127,6 +127,9 @@ public class UpdateTaskFragment extends Fragment {
                 buttonView.setText("작업을 완료하시겠습니까?");
             }
         });
+
+        mTimePickerLayout.setVisibility(View.VISIBLE);
+
 
 
         super.onViewCreated(view, savedInstanceState);
