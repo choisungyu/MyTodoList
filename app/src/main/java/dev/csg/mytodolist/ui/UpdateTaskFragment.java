@@ -24,11 +24,14 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.work.Data;
 
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
+import dev.csg.mytodolist.NotificationWorker;
 import dev.csg.mytodolist.R;
 import dev.csg.mytodolist.model.Todo;
 import dev.csg.mytodolist.repository.AppDatabase;
@@ -43,13 +46,17 @@ public class UpdateTaskFragment extends Fragment {
 
     private CheckBox mCheckBox;
 
-    private EditText mEditText;
+    private EditText mTitleEditText;
     private EditText mDateEditText;
     private EditText mTimeEditText;
 
     private ImageView mCancelImageView;
     private ImageView mDatePickerImageView;
     private ImageView mTimePickerImageView;
+
+    private long mLongChosenDate;
+    private int mHourOfDay;
+    private int mMinute;
 
     public UpdateTaskFragment() {
         setHasOptionsMenu(true);
@@ -75,7 +82,7 @@ public class UpdateTaskFragment extends Fragment {
         mDatePickerImageView = view.findViewById(R.id.btn_date_picker_dialog);
         mTimePickerImageView = view.findViewById(R.id.btn_time_picker_dialog);
 
-        mEditText = view.findViewById(R.id.edit_text);
+        mTitleEditText = view.findViewById(R.id.edit_text);
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -84,7 +91,7 @@ public class UpdateTaskFragment extends Fragment {
 
             mTodo = AppDatabase.getInstance(requireContext()).todoDao()
                     .getTodoById(id);
-            mEditText.setText(mTodo.getTitle());
+            mTitleEditText.setText(mTodo.getTitle());
             mDateEditText.setText(mTodo.getDate());
             mTimeEditText.setText(mTodo.getTime());
 
@@ -139,11 +146,11 @@ public class UpdateTaskFragment extends Fragment {
         DialogFragment newFragment = new DatePickerFragment((view1, year, month, dayOfMonth) -> {
             Calendar cal = Calendar.getInstance();
             cal.set(year, month, dayOfMonth, 0, 0);
-            Date chosenDate = cal.getTime();
+            mLongChosenDate = cal.getTimeInMillis();
+
 
             DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL);
-            String date = dateFormat.format(chosenDate);
-            // Display the formatted date
+            String date = dateFormat.format(mLongChosenDate);
 
             mDateEditText.setText(date);
 
@@ -156,6 +163,8 @@ public class UpdateTaskFragment extends Fragment {
 
     private void getTimePickerDialog() {
         @SuppressLint("DefaultLocale") DialogFragment timeFragment = new TimePickerFragment((view, hourOfDay, minute) -> {
+            mHourOfDay = hourOfDay;
+            mMinute = minute;
 
             boolean isPM = (hourOfDay >= 12);
             String time = String.format("%02d:%02d %s",
@@ -181,7 +190,7 @@ public class UpdateTaskFragment extends Fragment {
 
             Vibrator vibe = (Vibrator) requireContext().getSystemService(Context.VIBRATOR_SERVICE);
 
-            if (TextUtils.isEmpty(mEditText.getText().toString())) {
+            if (TextUtils.isEmpty(mTitleEditText.getText().toString())) {
                 if (vibe != null) {
                     vibe.vibrate(50);
                     Toast.makeText(requireContext(), "처음 작업을 입력하세요!", Toast.LENGTH_SHORT).show();
@@ -193,7 +202,7 @@ public class UpdateTaskFragment extends Fragment {
 
                     int id = bundle.getInt("id");
                     mTodo = AppDatabase.getInstance(requireContext()).todoDao().getTodoById(id);
-                    mTodo.setTitle(mEditText.getText().toString());
+                    mTodo.setTitle(mTitleEditText.getText().toString());
                     mTodo.setDate(mDateEditText.getText().toString());
                     mTodo.setTime(mTimeEditText.getText().toString());
 
@@ -203,8 +212,28 @@ public class UpdateTaskFragment extends Fragment {
                     }
                 }
             }
+//            mTodo = new Todo(getTitle(), getDate(), getTime(), getUUIDTag());
 
             AppDatabase.getInstance(requireContext()).todoDao().update(mTodo);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date(mLongChosenDate));
+            calendar.set(Calendar.HOUR_OF_DAY, mHourOfDay);
+            calendar.set(Calendar.MINUTE, mMinute);
+
+            long alertTime = calendar.getTimeInMillis() - System.currentTimeMillis();
+
+            int id = (int) (Math.random() * 50 + 1);
+
+            // Data 를 만들어서 빌더를 통해서 보냄
+            Data data = new Data.Builder()
+                    .putString("title", getTitle())
+                    .putString("date", getDate())
+                    .putString("time", getTime())
+                    .putInt("id", id)
+                    .build();
+
+            NotificationWorker.scheduleReminder(alertTime, data, mTodo.getTag());
 
             navController.popBackStack();
 
@@ -213,5 +242,21 @@ public class UpdateTaskFragment extends Fragment {
         }
         return super.onOptionsItemSelected(item);
 
+    }
+
+    private String getDate() {
+        return mDateEditText.getText().toString();
+    }
+
+    private String getTime() {
+        return mTimeEditText.getText().toString();
+    }
+
+    private String getTitle() {
+        return mTitleEditText.getText().toString();
+    }
+
+    private String getUUIDTag() {
+        return UUID.randomUUID().toString();
     }
 }
