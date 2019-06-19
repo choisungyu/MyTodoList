@@ -150,7 +150,6 @@ public class UpdateTaskFragment extends Fragment {
         mTimePickerLayout.setVisibility(View.VISIBLE);
 
 
-
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -203,41 +202,36 @@ public class UpdateTaskFragment extends Fragment {
                 }
                 Toast.makeText(requireContext(), "처음 작업을 입력하세요!", Toast.LENGTH_SHORT).show();
                 return true;
-            } else {
-                if (mTodo != null) {
-
-                    if (mCheckBox.isChecked()) {
-                        mTodo.setDone(true);
-                        AppDatabase.getInstance(requireContext()).todoDao().update(mTodo);
-                    }
-                }
             }
-            Todo todo = new Todo(getTitle(),mCalendar.getTimeInMillis(), getUUIDTag());
 
-            AppDatabase.getInstance(requireContext()).todoDao().update(todo);
+            if (mTodo != null) {
+                mTodo.setDone(mCheckBox.isChecked());
+                mTodo.setTitle(getTitle());
+                mTodo.setDate(mCalendar.getTimeInMillis());
+                AppDatabase.getInstance(requireContext()).todoDao().update(mTodo);
 
-            long alertTime = mCalendar.getTimeInMillis() - System.currentTimeMillis();
+                long alertTime = mCalendar.getTimeInMillis() - System.currentTimeMillis();
 
-            int id = (int) (Math.random() * 50 + 1);
+                int id = (int) (Math.random() * 50 + 1);
 
-            // Data 를 만들어서 빌더를 통해서 보냄
-            Data data = new Data.Builder()
-                    .putString("title", getTitle())
-                    .putString("date", getDate())
-                    .putString("time", getTime())
-                    .putInt("id", id)
-                    .build();
+                // Data 를 만들어서 빌더를 통해서 보냄
+                Data data = new Data.Builder()
+                        .putString("title", getTitle())
+                        .putString("date", getDate())
+                        .putString("time", getTime())
+                        .putInt("id", id)
+                        .build();
 
-            NotificationWorker.scheduleReminder(alertTime, data, todo.getTag());
+                NotificationWorker.scheduleReminder(alertTime, data, mTodo.getTag());
+                navController.popBackStack();
+                return true;
+            }
 
-            navController.popBackStack();
-
-
-            return true;
         }
         return super.onOptionsItemSelected(item);
 
     }
+
 
     private String getDate() {
         return mDateEditText.getText().toString();
