@@ -27,8 +27,9 @@ import androidx.navigation.Navigation;
 import androidx.work.Data;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 import dev.csg.mytodolist.NotificationWorker;
@@ -40,11 +41,13 @@ import dev.csg.mytodolist.repository.AppDatabase;
  * A simple {@link Fragment} subclass.
  */
 public class UpdateTaskFragment extends Fragment {
-    private Todo mTodo;
 
     private LinearLayout mTimePickerLayout;
 
     private CheckBox mCheckBox;
+
+    private Calendar mCalendar;
+
 
     private EditText mTitleEditText;
     private EditText mDateEditText;
@@ -54,9 +57,7 @@ public class UpdateTaskFragment extends Fragment {
     private ImageView mDatePickerImageView;
     private ImageView mTimePickerImageView;
 
-    private long mLongChosenDate;
-    private int mHourOfDay;
-    private int mMinute;
+    private Todo mTodo;
 
     public UpdateTaskFragment() {
         setHasOptionsMenu(true);
@@ -66,6 +67,9 @@ public class UpdateTaskFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        mCalendar = Calendar.getInstance();
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_update_task, container, false);
 
@@ -91,9 +95,17 @@ public class UpdateTaskFragment extends Fragment {
 
             mTodo = AppDatabase.getInstance(requireContext()).todoDao()
                     .getTodoById(id);
+
+            long todoDate = mTodo.getDate();
+            DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL);
+            String dateText = dateFormat.format(todoDate);
+
+            SimpleDateFormat timeFormat = new SimpleDateFormat("a hh:mm", Locale.getDefault());
+            String timeText = timeFormat.format(todoDate);
+
             mTitleEditText.setText(mTodo.getTitle());
-            mDateEditText.setText(mTodo.getDate());
-            mTimeEditText.setText(mTodo.getTime());
+            mDateEditText.setText(dateText);
+            mTimeEditText.setText(timeText);
 
         }
 
@@ -144,16 +156,13 @@ public class UpdateTaskFragment extends Fragment {
 
     private void getDatePickerDialog() {
         DialogFragment newFragment = new DatePickerFragment((view1, year, month, dayOfMonth) -> {
-            Calendar cal = Calendar.getInstance();
-            cal.set(year, month, dayOfMonth, 0, 0);
-            mLongChosenDate = cal.getTimeInMillis();
 
+            mCalendar.set(year, month, dayOfMonth);
 
             DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL);
-            String date = dateFormat.format(mLongChosenDate);
+            String date = dateFormat.format(mCalendar.getTime());
 
             mDateEditText.setText(date);
-
             mCancelImageView.setVisibility(View.VISIBLE);
             mTimePickerLayout.setVisibility(View.VISIBLE);
 
@@ -163,13 +172,11 @@ public class UpdateTaskFragment extends Fragment {
 
     private void getTimePickerDialog() {
         @SuppressLint("DefaultLocale") DialogFragment timeFragment = new TimePickerFragment((view, hourOfDay, minute) -> {
-            mHourOfDay = hourOfDay;
-            mMinute = minute;
+            mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            mCalendar.set(Calendar.MINUTE, minute);
 
-            boolean isPM = (hourOfDay >= 12);
-            String time = String.format("%02d:%02d %s",
-                    (hourOfDay == 12 || hourOfDay == 0) ? 12 : hourOfDay % 12, minute, isPM ? "오후" : "오전");
-
+            SimpleDateFormat dateFormat = new SimpleDateFormat("a hh:mm", Locale.getDefault());
+            String time = dateFormat.format(mCalendar.getTime());
             mTimeEditText.setText(time);
 
         });
@@ -193,18 +200,11 @@ public class UpdateTaskFragment extends Fragment {
             if (TextUtils.isEmpty(mTitleEditText.getText().toString())) {
                 if (vibe != null) {
                     vibe.vibrate(50);
-                    Toast.makeText(requireContext(), "처음 작업을 입력하세요!", Toast.LENGTH_SHORT).show();
-                    return true;
                 }
+                Toast.makeText(requireContext(), "처음 작업을 입력하세요!", Toast.LENGTH_SHORT).show();
+                return true;
             } else {
-                Bundle bundle = getArguments();
-                if (bundle != null) {
-
-                    int id = bundle.getInt("id");
-                    mTodo = AppDatabase.getInstance(requireContext()).todoDao().getTodoById(id);
-                    mTodo.setTitle(mTitleEditText.getText().toString());
-                    mTodo.setDate(mDateEditText.getText().toString());
-                    mTodo.setTime(mTimeEditText.getText().toString());
+                if (mTodo != null) {
 
                     if (mCheckBox.isChecked()) {
                         mTodo.setDone(true);
@@ -212,16 +212,11 @@ public class UpdateTaskFragment extends Fragment {
                     }
                 }
             }
-//            mTodo = new Todo(getTitle(), getDate(), getTime(), getUUIDTag());
+            Todo todo = new Todo(getTitle(),mCalendar.getTimeInMillis(), getUUIDTag());
 
-            AppDatabase.getInstance(requireContext()).todoDao().update(mTodo);
+            AppDatabase.getInstance(requireContext()).todoDao().update(todo);
 
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(new Date(mLongChosenDate));
-            calendar.set(Calendar.HOUR_OF_DAY, mHourOfDay);
-            calendar.set(Calendar.MINUTE, mMinute);
-
-            long alertTime = calendar.getTimeInMillis() - System.currentTimeMillis();
+            long alertTime = mCalendar.getTimeInMillis() - System.currentTimeMillis();
 
             int id = (int) (Math.random() * 50 + 1);
 
@@ -233,7 +228,7 @@ public class UpdateTaskFragment extends Fragment {
                     .putInt("id", id)
                     .build();
 
-            NotificationWorker.scheduleReminder(alertTime, data, mTodo.getTag());
+            NotificationWorker.scheduleReminder(alertTime, data, todo.getTag());
 
             navController.popBackStack();
 

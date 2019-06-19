@@ -26,8 +26,11 @@ import androidx.navigation.Navigation;
 import androidx.work.Data;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.UUID;
 
 import dev.csg.mytodolist.NotificationWorker;
@@ -51,9 +54,7 @@ public class NewTaskFragment extends Fragment {
     private ImageView mDatePickerImageView;
     private ImageView mTimePickerImageView;
 
-    private long mLongChosenDate;
-    private int mHourOfDay;
-    private int mMinute;
+    private Calendar mCalendar;
 
     public NewTaskFragment() {
         setHasOptionsMenu(true);
@@ -64,6 +65,8 @@ public class NewTaskFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_new_task, container, false);
+
+        mCalendar = Calendar.getInstance();
 
         // 새로 입력 받은 값
         mTitleEditText = view.findViewById(R.id.edit_text);
@@ -86,11 +89,16 @@ public class NewTaskFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        mDateEditText.setOnClickListener(v -> getDatePickerDialog());
+
+        // date
+        mDateEditText.setOnClickListener(v -> {
+            getDatePickerDialog();
+        });
         mDatePickerImageView.setOnClickListener(v -> {
             getDatePickerDialog();
         });
 
+        // cancel
         mCancelImageView.setOnClickListener(v -> {
             mDateEditText.setText(null); //  값 초기화 시켜야 하는데 , 초기화가 안됨....
 
@@ -101,8 +109,8 @@ public class NewTaskFragment extends Fragment {
             mTimePickerLayout.setVisibility(View.GONE);
         });
 
+        // time
         mTimeEditText.setOnClickListener(v -> getTimePickerDialog());
-
         mTimePickerImageView.setOnClickListener(v -> getTimePickerDialog());
 
 
@@ -112,31 +120,30 @@ public class NewTaskFragment extends Fragment {
 
     private void getDatePickerDialog() {
         DialogFragment newFragment = new DatePickerFragment((view1, year, month, dayOfMonth) -> {
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(year, month, dayOfMonth, 0, 0);
-            mLongChosenDate = calendar.getTimeInMillis();
+            mCalendar.set(year, month, dayOfMonth);
 
             DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL);
-            String date = dateFormat.format(mLongChosenDate);
+            String date = dateFormat.format(mCalendar.getTime());
+
             mDateEditText.setText(date);
             mCancelImageView.setVisibility(View.VISIBLE);
             mTimePickerLayout.setVisibility(View.VISIBLE);
 
         });
         newFragment.show(requireActivity().getSupportFragmentManager(), "datePicker");
+
     }
 
     private void getTimePickerDialog() {
-        @SuppressLint("DefaultLocale") DialogFragment timeFragment = new TimePickerFragment((view, hourOfDay, minute) -> {
-            mHourOfDay = hourOfDay;
-            mMinute = minute;
+            @SuppressLint("DefaultLocale") DialogFragment timeFragment = new TimePickerFragment((view, hourOfDay, minute) -> {
+                mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                mCalendar.set(Calendar.MINUTE, minute);
 
-            boolean isPM = (hourOfDay >= 12);
-            String time = String.format("%02d:%02d %s",
-                    (hourOfDay == 12 || hourOfDay == 0) ? 12 : hourOfDay % 12, minute, isPM ? "오후" : "오전");
-            mTimeEditText.setText(time);
+                SimpleDateFormat dateFormat = new SimpleDateFormat("a hh:mm", Locale.getDefault());
+                String time = dateFormat.format(mCalendar.getTime());
+                mTimeEditText.setText(time);
 
-        });
+            });
         timeFragment.show(requireActivity().getSupportFragmentManager(), "TimePicker");
     }
 
@@ -162,17 +169,12 @@ public class NewTaskFragment extends Fragment {
             }
 
             String mTitle = mTitleEditText.getText().toString();
-            Todo todo = new Todo(mTitle, getDate(), getTime(), getUUIDTag());
+            Todo todo = new Todo(mTitle, mCalendar.getTimeInMillis(), getUUIDTag());
             AppDatabase.getInstance(requireActivity()).todoDao().insertAll(
                     todo
             );
 
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(new Date(mLongChosenDate));
-            calendar.set(Calendar.HOUR_OF_DAY, mHourOfDay);
-            calendar.set(Calendar.MINUTE, mMinute);
-
-            long alertTime = calendar.getTimeInMillis() - System.currentTimeMillis();
+            long alertTime = mCalendar.getTimeInMillis() - System.currentTimeMillis();
 
             int id = (int) (Math.random() * 50 + 1);
 

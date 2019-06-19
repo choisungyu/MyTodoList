@@ -10,8 +10,8 @@ public class Todo {
     private int id;
 
     private String title;
-    private String date;
-    private String time;
+    private long date;
+    private long time;
     private String tag;
     private Boolean isDone = false;
 
@@ -23,11 +23,11 @@ public class Todo {
         this.tag = tag;
     }
 
-    public String getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
@@ -42,33 +42,21 @@ public class Todo {
     public Todo() {
     }
 
-    public Todo(String date, String time) {
-        this.date = date;
-        this.time = time;
-    }
-
-    public Todo(String title, String date, String time, String tag) {
+    public Todo(String title, long date, String tag) {
         this.title = title;
         this.date = date;
-        this.time = time;
         this.tag = tag;
-    }
-
-    public Todo(String title, String date, String time) {
-        this.title = title;
-        this.date = date;
-        this.time = time;
     }
 
     public Todo(String title) {
         this.title = title;
     }
 
-    public String getDate() {
+    public long getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(long date) {
         this.date = date;
     }
 

@@ -26,8 +26,6 @@ public class TimePickerFragment extends DialogFragment {
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
 
-        long longTypeCurrentTime = c.getTimeInMillis();
-
         return new TimePickerDialog(requireContext(), mListener, hour, minute, android.text.format.DateFormat.is24HourFormat(requireContext()));
     }
 }
