@@ -226,7 +226,6 @@ public class UpdateTaskFragment extends Fragment {
                 navController.popBackStack();
                 return true;
             }
-
         }
         return super.onOptionsItemSelected(item);
 
@@ -243,9 +242,5 @@ public class UpdateTaskFragment extends Fragment {
 
     private String getTitle() {
         return mTitleEditText.getText().toString();
-    }
-
-    private String getUUIDTag() {
-        return UUID.randomUUID().toString();
     }
 }
