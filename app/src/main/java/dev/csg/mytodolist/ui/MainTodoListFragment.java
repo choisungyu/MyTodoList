@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Filter;
@@ -46,6 +47,8 @@ import dev.csg.mytodolist.databinding.ItemTodoListBinding;
 import dev.csg.mytodolist.model.Todo;
 import dev.csg.mytodolist.repository.AppDatabase;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,6 +61,8 @@ public class MainTodoListFragment extends Fragment {
 
     private ActionMode mActionMode;
     private View mFab;
+
+    private InputMethodManager imm;
 
     private interface ActionCallback extends ActionMode.Callback {
         void setClickedView(View view);

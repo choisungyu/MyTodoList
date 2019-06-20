@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,8 +29,6 @@ import androidx.work.Data;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -37,6 +36,8 @@ import dev.csg.mytodolist.NotificationWorker;
 import dev.csg.mytodolist.R;
 import dev.csg.mytodolist.model.Todo;
 import dev.csg.mytodolist.repository.AppDatabase;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
 
 
 /**
@@ -55,6 +56,7 @@ public class NewTaskFragment extends Fragment {
     private ImageView mTimePickerImageView;
 
     private Calendar mCalendar;
+    private InputMethodManager imm;
 
     public NewTaskFragment() {
         setHasOptionsMenu(true);
@@ -83,6 +85,9 @@ public class NewTaskFragment extends Fragment {
         mTimePickerImageView = view.findViewById(R.id.btn_time_picker_dialog);
 
         mTimePickerLayout = view.findViewById(R.id.ll_time_picker);
+
+        imm = (InputMethodManager) requireActivity().getSystemService(INPUT_METHOD_SERVICE);
+
 
         return view;
     }
@@ -170,9 +175,7 @@ public class NewTaskFragment extends Fragment {
 
             String mTitle = mTitleEditText.getText().toString();
             Todo todo = new Todo(mTitle, mCalendar.getTimeInMillis(), getUUIDTag());
-            AppDatabase.getInstance(requireActivity()).todoDao().insertAll(
-                    todo
-            );
+            AppDatabase.getInstance(requireActivity()).todoDao().insertAll(todo);
 
             long alertTime = mCalendar.getTimeInMillis() - System.currentTimeMillis();
 
@@ -187,6 +190,8 @@ public class NewTaskFragment extends Fragment {
                     .build();
 
             NotificationWorker.scheduleReminder(alertTime, data, todo.getTag());
+
+            imm.hideSoftInputFromWindow(mTitleEditText.getWindowToken(), 0);
 
             navController.popBackStack();
             return true;

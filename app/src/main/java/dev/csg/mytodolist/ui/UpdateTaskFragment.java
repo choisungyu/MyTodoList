@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -37,6 +38,8 @@ import dev.csg.mytodolist.R;
 import dev.csg.mytodolist.model.Todo;
 import dev.csg.mytodolist.repository.AppDatabase;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -58,6 +61,7 @@ public class UpdateTaskFragment extends Fragment {
     private ImageView mTimePickerImageView;
 
     private Todo mTodo;
+    private InputMethodManager imm;
 
     public UpdateTaskFragment() {
         setHasOptionsMenu(true);
@@ -108,7 +112,7 @@ public class UpdateTaskFragment extends Fragment {
             mTimeEditText.setText(timeText);
 
         }
-
+        imm = (InputMethodManager) requireActivity().getSystemService(INPUT_METHOD_SERVICE);
 
         mTimePickerLayout = view.findViewById(R.id.ll_time_picker);
 
@@ -223,6 +227,9 @@ public class UpdateTaskFragment extends Fragment {
                         .build();
 
                 NotificationWorker.scheduleReminder(alertTime, data, mTodo.getTag());
+
+                imm.hideSoftInputFromWindow(mTitleEditText.getWindowToken(), 0);
+
                 navController.popBackStack();
                 return true;
             }
