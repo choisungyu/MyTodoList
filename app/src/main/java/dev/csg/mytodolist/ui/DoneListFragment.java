@@ -1,22 +1,9 @@
 package dev.csg.mytodolist.ui;
 
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,6 +16,17 @@ import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.SearchView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -36,7 +34,6 @@ import java.util.List;
 import java.util.Set;
 
 import dev.csg.mytodolist.MainViewModel;
-import dev.csg.mytodolist.NotificationWorker;
 import dev.csg.mytodolist.R;
 import dev.csg.mytodolist.databinding.ItemTodoListBinding;
 import dev.csg.mytodolist.model.Todo;
@@ -56,7 +53,7 @@ public class DoneListFragment extends Fragment {
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mode.getMenuInflater().inflate(R.menu.menu_long_click, menu);
+            mode.getMenuInflater().inflate(R.menu.menu_long_click_done, menu);
             return true;
         }
 
@@ -121,7 +118,7 @@ public class DoneListFragment extends Fragment {
     private void alertTodoDoneDialogNote(ActionMode mode) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("확실한가요?");
-        builder.setMessage("완료된 작업으로 설정하시겠습니까?");
+        builder.setMessage("완료되지 않은 작업으로 설정하시겠습니까?");
         builder.setCancelable(false);
         builder.setPositiveButton("예", (dialog, id) -> {
 
