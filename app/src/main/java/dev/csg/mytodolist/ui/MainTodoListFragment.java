@@ -61,7 +61,6 @@ public class MainTodoListFragment extends Fragment {
 
     private ActionMode mActionMode;
     private View mFab;
-
     private InputMethodManager imm;
 
     private interface ActionCallback extends ActionMode.Callback {
@@ -216,13 +215,13 @@ public class MainTodoListFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                return false;
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 mAdapter.getFilter().filter(newText);
-                return false;
+                return true;
             }
         });
 
@@ -259,16 +258,19 @@ public class MainTodoListFragment extends Fragment {
         mEditText = view.findViewById(R.id.edit_text);
         mEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+
             } else {
                 mTitle = mEditText.getText().toString();
-                AppDatabase.getInstance(requireActivity()).todoDao().insertAll(
-                        new Todo(mTitle)
-                );
+                AppDatabase.getInstance(requireActivity()).todoDao().insertAll(new Todo(mTitle));
 
                 mEditText.setText("");
+
+                imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
             }
             return true;
         });
+        imm = (InputMethodManager) requireActivity().getSystemService(INPUT_METHOD_SERVICE);
+
 
         return view;
     }
