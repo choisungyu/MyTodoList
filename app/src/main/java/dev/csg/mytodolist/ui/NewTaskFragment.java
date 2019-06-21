@@ -96,12 +96,8 @@ public class NewTaskFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         // date
-        mDateEditText.setOnClickListener(v -> {
-            getDatePickerDialog();
-        });
-        mDatePickerImageView.setOnClickListener(v -> {
-            getDatePickerDialog();
-        });
+        mDateEditText.setOnClickListener(v -> getDatePickerDialog());
+        mDatePickerImageView.setOnClickListener(v -> getDatePickerDialog());
 
         // cancel
         mCancelImageView.setOnClickListener(v -> {
