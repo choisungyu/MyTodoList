@@ -215,6 +215,9 @@ public class MainTodoListFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                searchView.clearFocus();
+                searchView.setQuery("", false);
+                searchView.setIconified(true);
                 return true;
             }
 

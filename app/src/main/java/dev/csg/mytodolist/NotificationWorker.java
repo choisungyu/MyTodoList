@@ -17,10 +17,9 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import dev.csg.mytodolist.model.Todo;
+import dev.csg.mytodolist.ui.MainTodoListFragment;
 import dev.csg.mytodolist.ui.NewTaskFragment;
 
 public class NotificationWorker extends Worker {
@@ -42,13 +41,13 @@ public class NotificationWorker extends Worker {
     }
 
     private void sendNotification(String title, String date, String time, int id) {
-        Intent intent = new Intent(getApplicationContext(), NewTaskFragment.class);
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 
         intent.setFlags(
                 Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra("id", id);
 
-        Bitmap largeIcon = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.common_google_signin_btn_icon_dark_focused);
+        Bitmap largeIcon = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.ic_launcher_icon);
 
 
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
@@ -62,13 +61,12 @@ public class NotificationWorker extends Worker {
             notificationManager.createNotificationChannel(channel);
         }
 
-        // 노티 알림 처리 하는 곳(푸쉬 메시지 작성)
         NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext(), "default")
                 .setContentTitle(date + "," + time + "에 작업")
                 .setContentText(title)
                 .setContentIntent(pendingIntent)
                 .setLargeIcon(largeIcon)
-                .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark_focused)
+                .setSmallIcon(R.drawable.ic_launcher_icon)
                 .setAutoCancel(true);
 
         notificationManager.notify(id, notification.build());
